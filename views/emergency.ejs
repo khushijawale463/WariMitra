@@ -1,0 +1,70 @@
+<%- include('partials/header') %>
+
+<section>
+  <h2>Emergency Support</h2>
+
+  <% if (typeof submitted !== 'undefined') { %> <% } %>
+
+  <h3>Helpline Numbers</h3>
+  <table>
+    <thead>
+      <tr><th>Service</th><th>Number</th></tr>
+    </thead>
+    <tbody>
+      <% helplines.forEach(function(h) { %>
+        <tr><td><%= h.name %></td><td><%= h.number %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <h3>Report an Emergency</h3>
+  <p>Fill this form if you or someone nearby needs urgent help. This will be visible to the response team.</p>
+  <form method="POST" action="/emergency" class="stack-form">
+    <label for="name">Your Name</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="type">Emergency Type</label>
+    <select id="type" name="type" required>
+      <option value="Medical">Medical</option>
+      <option value="Lost Person">Lost Person</option>
+      <option value="Security">Security</option>
+      <option value="Fire">Fire</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="location">Current Location</label>
+    <input type="text" id="location" name="location" placeholder="e.g. Near Wakhri Phata" required>
+
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="3"></textarea>
+
+    <button type="submit">Submit Emergency Report</button>
+  </form>
+
+  <h3>Recent Reports</h3>
+  <% if (reports.length === 0) { %>
+    <p><em>No reports yet.</em></p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Phone</th><th>Type</th><th>Location</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <% reports.forEach(function(r) { %>
+          <tr>
+            <td><%= r.name %></td>
+            <td><%= r.phone %></td>
+            <td><%= r.type %></td>
+            <td><%= r.location %></td>
+            <td><%= r.status %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,57 @@
+<%- include('partials/header') %>
+
+<section>
+  <h2>Digital Seva</h2>
+  <p>
+    Can't join the Wari in person? Remote devotees can still participate by offering seva
+    (service) — Annadan, medical support, donations, or volunteering for on-ground coordination.
+  </p>
+
+  <h3>Register Your Seva</h3>
+  <form method="POST" action="/seva" class="stack-form">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <label for="sevaType">Type of Seva</label>
+    <select id="sevaType" name="sevaType" required>
+      <option value="Annadan (Food Seva)">Annadan (Food Seva)</option>
+      <option value="Medical Seva">Medical Seva</option>
+      <option value="Donation">Donation</option>
+      <option value="Volunteer Support">Volunteer Support</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="message">Message (optional)</label>
+    <textarea id="message" name="message" rows="3"></textarea>
+
+    <button type="submit">Submit Seva Request</button>
+  </form>
+
+  <h3>Recent Seva Contributions</h3>
+  <% if (sevas.length === 0) { %>
+    <p><em>No seva requests yet. Be the first to contribute.</em></p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Type of Seva</th><th>Message</th></tr>
+      </thead>
+      <tbody>
+        <% sevas.forEach(function(s) { %>
+          <tr>
+            <td><%= s.name %></td>
+            <td><%= s.sevaType %></td>
+            <td><%= s.message || '-' %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

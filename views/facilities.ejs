@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+<section>
+  <h2>Nearby Facilities</h2>
+  <p>Find medical camps, food, water, toilets, shelter, and parking points along the Wari route.</p>
+
+  <form method="GET" action="/facilities" class="inline-form">
+    <label for="category">Filter by category:</label>
+    <select name="category" id="category" onchange="this.form.submit()">
+      <option value="" <%= selectedCategory === '' ? 'selected' : '' %>>All</option>
+      <option value="Medical" <%= selectedCategory === 'Medical' ? 'selected' : '' %>>Medical</option>
+      <option value="Food" <%= selectedCategory === 'Food' ? 'selected' : '' %>>Food</option>
+      <option value="Water" <%= selectedCategory === 'Water' ? 'selected' : '' %>>Water</option>
+      <option value="Toilet" <%= selectedCategory === 'Toilet' ? 'selected' : '' %>>Toilet</option>
+      <option value="Shelter" <%= selectedCategory === 'Shelter' ? 'selected' : '' %>>Shelter</option>
+      <option value="Parking" <%= selectedCategory === 'Parking' ? 'selected' : '' %>>Parking</option>
+      <option value="Other" <%= selectedCategory === 'Other' ? 'selected' : '' %>>Other</option>
+    </select>
+  </form>
+
+  <% if (facilities.length === 0) { %>
+    <p><em>No facilities found. Add one below.</em></p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Location</th>
+          <th>Landmark</th>
+          <th>Contact</th>
+          <th>Description</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% facilities.forEach(function(f) { %>
+          <tr>
+            <td><%= f.name %></td>
+            <td><%= f.category %></td>
+            <td><%= f.location %></td>
+            <td><%= f.landmark || '-' %></td>
+            <td><%= f.contact || '-' %></td>
+            <td><%= f.description || '-' %></td>
+            <td>
+              <form method="POST" action="/facilities/<%= f._id %>/delete" onsubmit="return confirm('Delete this facility?');">
+                <button type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+
+  <h3>Add a Facility</h3>
+  <form method="POST" action="/facilities" class="stack-form">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="Medical">Medical</option>
+      <option value="Food">Food</option>
+      <option value="Water">Water</option>
+      <option value="Toilet">Toilet</option>
+      <option value="Shelter">Shelter</option>
+      <option value="Parking">Parking</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="location">Location</label>
+    <input type="text" id="location" name="location" placeholder="e.g. Near Chandrabhaga Ghat" required>
+
+    <label for="landmark">Landmark (optional)</label>
+    <input type="text" id="landmark" name="landmark">
+
+    <label for="contact">Contact (optional)</label>
+    <input type="text" id="contact" name="contact">
+
+    <label for="description">Description (optional)</label>
+    <textarea id="description" name="description" rows="3"></textarea>
+
+    <button type="submit">Add Facility</button>
+  </form>
+</section>
+
+<%- include('partials/footer') %>
