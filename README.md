@@ -23,7 +23,7 @@ platform for remote devotees.
    donation, volunteering) and see recent contributions.
 
 ## Project Structure
-```
+`
 pandharpur-wari-app/
 ├── models/
 │   ├── Facility.js
