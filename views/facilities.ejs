@@ -72,10 +72,16 @@
               </td>
               <td><%= f.description || '-' %></td>
               <td>
-                <form method="POST" action="/facilities/<%= f._id %>/delete" onsubmit="return confirm('Are you sure you want to remove this facility?');">
-                  <button type="submit" class="btn-delete-sm" data-i18n="btn-delete"><i class="fa-solid fa-trash-can"></i> Delete</button>
-                </form>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <a href="/tracker?navToLat=<%= f.lat || 17.6790 %>&navToLng=<%= f.lng || 75.3270 %>&title=<%= encodeURIComponent(f.name) %>" class="btn-primary" style="padding: 4px 10px; font-size: 0.78rem; text-decoration: none; border-radius: 6px; white-space: nowrap;">
+                    <i class="fa-solid fa-diamond-turn-right"></i> Navigate Here
+                  </a>
+                  <form method="POST" action="/facilities/<%= f._id %>/delete" onsubmit="return confirm('Are you sure you want to remove this facility?');" style="display: inline;">
+                    <button type="submit" class="btn-delete-sm" data-i18n="btn-delete"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                  </form>
+                </div>
               </td>
+
             </tr>
           <% }); %>
         </tbody>

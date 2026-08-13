@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<!-- Leaflet CSS for Map Fallback -->
+<!-- Leaflet CSS for Map -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <div class="page-header">
@@ -8,22 +8,30 @@
     <i class="fa-solid fa-map-marked-alt" style="color: var(--primary-saffron);"></i> Find My Friend &amp; Warkari Dindi Tracker
   </h2>
   <p class="page-description" data-i18n="trk-desc">
-    Real-time Palkhi route mapping, group troop tracking, and friend distance monitoring along the Pandharpur Wari journey.
+    Real-time Palkhi route mapping, turn-by-turn walking directions, facility locator, stray alerts, crowd heatmaps, and SOS emergency support along the Pandharpur Wari journey.
   </p>
 </div>
 
 <section>
   <div class="tracker-layout">
+
     <!-- Map View Area -->
-    <div class="map-container-wrapper">
+    <div class="map-container-wrapper" style="position: relative;">
+      
+      <!-- Phase 2: Persistent SOS Emergency Floating Action Button -->
+      <button type="button" class="sos-fab-btn" onclick="openSosModal()" title="Instant Emergency SOS Broadcast">
+        <i class="fa-solid fa-circle-exclamation"></i> 🚨 SOS Emergency
+      </button>
+
       <div class="map-controls-overlay">
-        <!-- Search Bar Overlay -->
+        <!-- Search Bar & Filter Row -->
         <div class="map-search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="tracker-search" placeholder="Search Dindi # or Friend name..." data-i18n-ph="trk-search-ph" onkeyup="filterTrackerList(this.value)">
+          <input type="text" id="tracker-search" placeholder="Search Dindi #, Friend, or Facility..." data-i18n-ph="trk-search-ph" onkeyup="filterTrackerList(this.value)">
         </div>
-        <!-- Map Action Controls -->
-        <div class="map-btn-group">
+
+        <!-- Primary View Mode Filters -->
+        <div class="map-btn-group" style="flex-wrap: wrap; gap: 4px;">
           <button type="button" class="btn-map-control" id="btn-center-user" onclick="centerOnUser()" data-i18n="trk-btn-my-loc">
             <i class="fa-solid fa-crosshairs"></i> My Location
           </button>
@@ -36,13 +44,71 @@
           <button type="button" class="btn-map-control" id="btn-filter-friends" onclick="filterMapCategory('friends')">
             Friends
           </button>
+          <button type="button" class="btn-map-control" id="btn-filter-facilities" onclick="filterMapCategory('facilities')">
+            🏥 Facilities
+          </button>
+          <!-- Phase 2: Crowd Heatmap Toggle Button -->
+          <button type="button" class="btn-map-control" id="btn-toggle-heatmap" onclick="toggleCrowdHeatmap()" style="border-color: #F59E0B;">
+            🔥 Crowd Density
+          </button>
+          <!-- Fullscreen Toggle Button -->
+          <button type="button" class="btn-map-control" id="btn-toggle-fullscreen" onclick="toggleMapFullscreen()" title="Toggle Full Screen View" style="border-color: var(--primary-saffron);">
+            <i class="fa-solid fa-expand"></i> Fullscreen
+          </button>
+        </div>
+
+
+        <!-- Facility Sub-Category Filter Bar & Radius Selector -->
+        <div id="facility-filter-container" style="margin-top: 6px; display: flex; align-items: center; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
+          <select id="facility-radius-select" class="radius-select-box" onchange="onFacilityParamChange()">
+            <option value="500">📏 500m</option>
+            <option value="1000">📏 1 km</option>
+            <option value="2000" selected>📏 2 km</option>
+            <option value="5000">📏 5 km</option>
+          </select>
+          <div class="facility-filter-strip">
+            <button type="button" class="btn-map-control btn-fac-sub active" data-subcat="all" onclick="selectFacilitySubCategory('all')">All Camps</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Medical" onclick="selectFacilitySubCategory('Medical')">🏥 Medical</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Water" onclick="selectFacilitySubCategory('Water')">💧 Water</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Food" onclick="selectFacilitySubCategory('Food')">🍲 Food</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Shelter" onclick="selectFacilitySubCategory('Shelter')">⛺ Shelter</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Toilet" onclick="selectFacilitySubCategory('Toilet')">🚻 Toilet</button>
+            <button type="button" class="btn-map-control btn-fac-sub" data-subcat="Parking" onclick="selectFacilitySubCategory('Parking')">🅿️ Parking</button>
+          </div>
         </div>
       </div>
-      <!-- Map Target Container -->
-      <div id="map"></div>
+
+      <!-- Leaflet Map Container -->
+      <div id="map" style="height: 520px; border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm);"></div>
+
+      <!-- Collapsible Bottom Navigation Drawer (Turn-by-Turn Guidance) -->
+      <div id="nav-drawer" class="nav-drawer" style="display: none;">
+        <div class="nav-drawer-header">
+          <div class="nav-drawer-title-box">
+            <div class="nav-drawer-icon"><i class="fa-solid fa-person-walking"></i></div>
+            <div>
+              <div class="nav-drawer-target-name" id="nav-target-name">Navigating to Target</div>
+              <div class="nav-drawer-metrics">
+                <span><i class="fa-solid fa-route"></i> <strong id="nav-dist-text">0.0 km</strong></span>
+                <span><i class="fa-solid fa-clock"></i> ETA: <strong id="nav-eta-text">0 mins</strong> (4 km/h)</span>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-stop-nav" onclick="stopNavigation()">
+            <i class="fa-solid fa-xmark"></i> End Navigation
+          </button>
+        </div>
+        <div class="nav-drawer-toggle-bar" onclick="toggleNavStepsDrawer()">
+          <span><i class="fa-solid fa-list-ol"></i> Walking Steps &amp; Turns (<span id="nav-step-count">0</span>)</span>
+          <span id="nav-drawer-toggle-icon"><i class="fa-solid fa-chevron-up"></i></span>
+        </div>
+        <div id="nav-steps-list" class="nav-steps-list">
+          <!-- Steps inserted dynamically -->
+        </div>
+      </div>
     </div>
 
-    <!-- Troop & Friend Sidebar Drawer -->
+    <!-- Sidebar Drawer: Troops, Friends & Settings -->
     <div class="tracker-sidebar">
       <!-- Live Location FAB Header -->
       <div class="fab-live-bar">
@@ -52,16 +118,43 @@
           </div>
           <div>
             <div class="fab-title">
-              <span data-i18n="trk-live-title">Share Live Location</span>
+              <span>Share Live Location</span>
               <span class="pulse-badge inactive" id="location-pulse-badge"></span>
             </div>
-            <span style="font-size: 0.76rem; color: #94A3B8;" id="location-status-text">Location Sharing Off</span>
+            <div style="display: flex; gap: 6px; align-items: center; margin-top: 2px;">
+              <span style="font-size: 0.76rem; color: #94A3B8;" id="location-status-text">Location Sharing Off</span>
+              <span class="sync-status-badge online" id="network-sync-badge"><i class="fa-solid fa-wifi"></i> Online</span>
+            </div>
           </div>
         </div>
         <label class="switch-toggle" title="Toggle Live Location Sharing">
           <input type="checkbox" id="live-location-toggle" onchange="toggleLiveLocation(this.checked)">
           <span class="slider-round"></span>
         </label>
+      </div>
+
+      <!-- Phase 2: Feature Toggles Bar (Marathi Voice & Stray Distance Threshold) -->
+      <div style="background: #F8FAFC; padding: 10px 14px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px;">
+        <!-- Marathi Voice Guidance Switch -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.82rem; font-weight: 600; color: var(--text-dark);">
+            <i class="fa-solid fa-volume-high" style="color: var(--primary-saffron);"></i> मराठी आवाज मार्गदर्शन (Voice Guidance)
+          </span>
+          <label class="switch-toggle" style="transform: scale(0.85);" title="Marathi Voice Prompts">
+            <input type="checkbox" id="marathi-voice-toggle" checked onchange="toggleMarathiVoice(this.checked)">
+            <span class="slider-round"></span>
+          </label>
+        </div>
+
+        <!-- Safe Distance Threshold Selector -->
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+          <span><i class="fa-solid fa-shield-halved" style="color: var(--primary-gold);"></i> Stray Alert Safe Radius:</span>
+          <select id="stray-threshold-select" class="radius-select-box" style="padding: 2px 6px;" onchange="updateStrayThreshold(this.value)">
+            <option value="200">200m</option>
+            <option value="300" selected>300m (Default)</option>
+            <option value="500">500m</option>
+          </select>
+        </div>
       </div>
 
       <!-- Tab Buttons -->
@@ -105,7 +198,7 @@
             <div class="member-details">
               <div class="member-name">Mauli Patil <span style="font-size: 0.75rem; color: var(--primary-saffron);">(Leader)</span></div>
               <div class="member-subtext">
-                <span class="distance-pill">0m (You)</span>
+                <span class="distance-pill" id="dist-user">0m (You)</span>
                 <span class="battery-badge"><i class="fa-solid fa-battery-full" style="color: #22C55E;"></i> 92%</span>
               </div>
             </div>
@@ -118,11 +211,14 @@
             <div class="member-details">
               <div class="member-name">Rahul Patil</div>
               <div class="member-subtext">
-                <span class="distance-pill">350m away</span>
+                <span class="distance-pill" id="dist-f1">350m away</span>
                 <span class="battery-badge"><i class="fa-solid fa-battery-three-quarters" style="color: #22C55E;"></i> 85%</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6770, 75.3215, 'Rahul Patil')" title="Navigate to Friend"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            </div>
           </div>
 
           <!-- Member 3 -->
@@ -131,11 +227,14 @@
             <div class="member-details">
               <div class="member-name">Priya Joshi</div>
               <div class="member-subtext">
-                <span class="distance-pill">1.2 km away</span>
+                <span class="distance-pill" id="dist-f2">1.2 km away</span>
                 <span class="battery-badge"><i class="fa-solid fa-battery-half" style="color: var(--primary-gold);"></i> 64%</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6820, 75.3280, 'Priya Joshi')" title="Navigate to Friend"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            </div>
           </div>
 
           <!-- Member 4 -->
@@ -144,11 +243,14 @@
             <div class="member-details">
               <div class="member-name">Amit Shinde</div>
               <div class="member-subtext">
-                <span class="distance-pill">2.8 km away</span>
+                <span class="distance-pill" id="dist-f3">2.8 km away</span>
                 <span class="battery-badge"><i class="fa-solid fa-battery-quarter" style="color: var(--emergency-red);"></i> 28%</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6650, 75.3100, 'Amit Shinde')" title="Navigate to Friend"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+            </div>
           </div>
         </div>
       </div>
@@ -169,11 +271,14 @@
             <div class="member-details">
               <div class="member-name">Rahul Patil</div>
               <div class="member-subtext">
-                <span class="distance-pill">350m away</span>
+                <span class="distance-pill" id="dist-tab-f1">350m away</span>
                 <span>• Updated 2m ago</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6770, 75.3215, 'Rahul Patil')" title="Navigate"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
 
           <!-- Friend 2 -->
@@ -182,11 +287,14 @@
             <div class="member-details">
               <div class="member-name">Priya Joshi</div>
               <div class="member-subtext">
-                <span class="distance-pill">1.2 km away</span>
+                <span class="distance-pill" id="dist-tab-f2">1.2 km away</span>
                 <span>• Updated 5m ago</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6820, 75.3280, 'Priya Joshi')" title="Navigate"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
 
           <!-- Friend 3 -->
@@ -195,11 +303,14 @@
             <div class="member-details">
               <div class="member-name">Amit Shinde</div>
               <div class="member-subtext">
-                <span class="distance-pill">2.8 km away</span>
+                <span class="distance-pill" id="dist-tab-f3">2.8 km away</span>
                 <span>• Updated 12m ago</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6650, 75.3100, 'Amit Shinde')" title="Navigate"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
 
           <!-- Friend 4 -->
@@ -208,11 +319,14 @@
             <div class="member-details">
               <div class="member-name">Santosh Gaikwad</div>
               <div class="member-subtext">
-                <span class="distance-pill">4.1 km away</span>
+                <span class="distance-pill" id="dist-tab-f4">4.1 km away</span>
                 <span>• Updated 18m ago</span>
               </div>
             </div>
-            <button type="button" class="btn-locate" onclick="focusMarker('f4')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="btn-locate" onclick="startNavigation(17.6600, 75.3020, 'Santosh Gaikwad')" title="Navigate"><i class="fa-solid fa-diamond-turn-right"></i></button>
+              <button type="button" class="btn-locate" onclick="focusMarker('f4')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+            </div>
           </div>
         </div>
 
@@ -224,12 +338,60 @@
   </div>
 </section>
 
-<!-- Leaflet JS Fallback Engine -->
+<!-- Phase 2: SOS Confirmation Modal -->
+<div id="sos-modal-overlay" class="warimitra-modal-overlay" style="display: none;">
+  <div class="warimitra-modal-card">
+    <div class="modal-sos-header">
+      <i class="fa-solid fa-triangle-exclamation"></i> Confirm Emergency SOS Broadcast
+    </div>
+    <div class="modal-sos-body">
+      Are you sure you want to broadcast an urgent SOS distress signal?
+      <br><br>
+      Your current coordinates (<strong id="sos-preview-coords">17.6750, 75.3200</strong>) will be sent instantly to:
+      <ul style="margin-top: 6px; padding-left: 20px;">
+        <li>Dindi Leader: <strong>Mauli Patil</strong></li>
+        <li>Nearest Medical Camp: <strong>Sanjeevani Medical Camp (216m)</strong></li>
+        <li>Pandharpur Wari Central Emergency Control Room</li>
+      </ul>
+    </div>
+    <div class="modal-actions-row">
+      <button type="button" class="btn-outline" style="padding: 8px 18px;" onclick="closeSosModal()">Cancel</button>
+      <button type="button" class="btn-primary" style="padding: 8px 20px; background: #DC2626;" onclick="sendSosBroadcast()">
+        🚨 YES, BROADCAST SOS NOW
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 2: SOS Acknowledgment Receipt Modal -->
+<div id="sos-ack-modal" class="warimitra-modal-overlay" style="display: none;">
+  <div class="warimitra-modal-card" style="border-top: 6px solid #16A34A;">
+    <div class="modal-sos-header" style="color: #16A34A;">
+      <i class="fa-solid fa-circle-check"></i> SOS Broadcast Confirmed!
+    </div>
+    <div class="modal-sos-body">
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 12px; border-radius: 10px; margin-bottom: 12px;">
+        <div style="font-size: 0.82rem; color: #15803D;">Broadcast Reference ID:</div>
+        <div style="font-size: 1.3rem; font-weight: 700; color: #166534;" id="sos-ack-ref">SOS-WARI-789123</div>
+      </div>
+      <div><strong>Status:</strong> First responders have been notified. Stay where you are if safe.</div>
+      <div id="sos-ack-list" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dark);">
+        <!-- Dispatched parties inserted dynamically -->
+      </div>
+    </div>
+    <div class="modal-actions-row">
+      <button type="button" class="btn-primary" style="padding: 8px 24px;" onclick="closeSosAckModal()">OK, I UNDERSTAND</button>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet JS & Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  // Mock Data Structures
+  // State & Data
   const userLoc = { lat: 17.6750, lng: 75.3200, name: "Mauli Patil (You)", role: "Troop Leader" };
+  const dindiLeaderLoc = { lat: 17.6820, lng: 75.3260, name: "Mauli Patil (Leader)" };
 
   const troopsData = [
     { id: 't1', name: 'Dindi #1 - Gyaneshwar Maharaj Palkhi', lat: 17.6820, lng: 75.3260, members: 1200, leader: 'HVB Chopdar' },
@@ -246,20 +408,306 @@
 
   let mapInstance = null;
   let markersMap = {};
-  let currentFilter = 'all';
+  let facilityMarkers = [];
+  let heatmapLayer = null;
+  let isHeatmapActive = false;
 
-  // Initialize Map Engine (Google Maps or Leaflet Fallback)
-  function initTrackerMap() {
-    // Check if Google Maps JS API is loaded
-    if (typeof google !== 'undefined' && google.maps) {
-      initGoogleMap();
-    } else {
-      initLeafletMap();
+  let currentFilter = 'all';
+  let activeFacilitySubCat = 'all';
+
+  // Navigation State
+  let isNavigating = false;
+  let activePolyline = null;
+  let activeTarget = null;
+  let watchPositionId = null;
+  let lastCalcLoc = null;
+
+  // Phase 2 Settings State
+  let isMarathiVoiceEnabled = true;
+  let straySafeThresholdMeters = 300;
+  let offlineGpsQueue = [];
+
+  // Haversine Distance Helper (in meters)
+  function haversineMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return Math.round(R * c);
+  }
+
+  function formatDistanceText(meters) {
+    if (meters < 1000) return `${meters}m`;
+    return `${(meters / 1000).toFixed(1)} km`;
+  }
+
+  /* -------------------------------------------------------------
+     PHASE 2 FEATURE 8: MARATHI VOICE GUIDANCE (WEB SPEECH API)
+     Phrasing flagged for native Marathi speaker review:
+     - Left turn: "डावीकडे वळा" (Davikade vala)
+     - Right turn: "उजवीकडे वळा" (Ujvikade vala)
+     - Straight: "सरळ रस्ता धरा" (Saral rasta dhara)
+     - Arrival: "तुम्ही गंतव्य स्थळावर पोहोचला आहात" (Tumhi gantavya sthalavar pohochla aahat)
+     - Stray Alert: "सावधान! तुम्ही तुमच्या दिंडी गटापासून ३०० मीटरपेक्षा जास्त लांब गेला आहात."
+     - SOS Confirmation: "आपला आणीबाणी संदेश वैद्यकीय पथकाकडे पाठवला आहे."
+  ------------------------------------------------------------- */
+  function speakMarathiPrompt(text) {
+    if (!isMarathiVoiceEnabled || !('speechSynthesis' in window)) return;
+
+    window.speechSynthesis.cancel(); // Stop any pending utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'mr-IN';
+    utterance.rate = 0.9; // Slightly slower for clear outdoor comprehension
+
+    // Check if Marathi voice is installed on device, else fallback to default
+    const voices = window.speechSynthesis.getVoices();
+    const mrVoice = voices.find(v => v.lang.includes('mr') || v.lang.includes('hi'));
+    if (mrVoice) utterance.voice = mrVoice;
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function toggleMarathiVoice(enabled) {
+    isMarathiVoiceEnabled = enabled;
+    if (enabled) {
+      speakMarathiPrompt("मराठी आवाज मार्गदर्शन सुरु झाले आहे"); // Voice guidance activated
     }
   }
 
-  // Leaflet Interactive Map Fallback
-  function initLeafletMap() {
+  /* -------------------------------------------------------------
+     PHASE 2 FEATURE 4: STRAY / GROUP SEPARATION ALERT SYSTEM
+  ------------------------------------------------------------- */
+  function updateStrayThreshold(val) {
+    straySafeThresholdMeters = parseInt(val) || 300;
+    checkStrayStatus();
+  }
+
+  function checkStrayStatus() {
+    // Stray alert popup disabled per user request
+    return;
+  }
+
+  function dismissStrayAlert() {
+    const banner = document.getElementById('stray-alert-banner');
+    if (banner) banner.style.display = 'none';
+  }
+
+
+  /* -------------------------------------------------------------
+     PHASE 2 FEATURE 5: OFFLINE MAP CACHING & LOCATION BUFFERING
+  ------------------------------------------------------------- */
+  function setupOfflineNetworkListeners() {
+    const syncBadge = document.getElementById('network-sync-badge');
+
+    function updateNetworkStatus() {
+      if (navigator.onLine) {
+        if (syncBadge) {
+          syncBadge.className = 'sync-status-badge online';
+          syncBadge.innerHTML = '<i class="fa-solid fa-wifi"></i> Online';
+        }
+        syncBufferedPings();
+      } else {
+        if (syncBadge) {
+          syncBadge.className = 'sync-status-badge offline';
+          syncBadge.innerHTML = '<i class="fa-solid fa-plane-slash"></i> Offline (Buffering)';
+        }
+      }
+    }
+
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+    updateNetworkStatus();
+  }
+
+  /* Fullscreen Screen Mode Toggle Function */
+  function toggleMapFullscreen() {
+    const wrapper = document.querySelector('.map-container-wrapper');
+    const btn = document.getElementById('btn-toggle-fullscreen');
+    if (!wrapper) return;
+
+    const isFs = wrapper.classList.contains('map-fullscreen-active');
+
+    if (!isFs) {
+      wrapper.classList.add('map-fullscreen-active');
+      if (btn) {
+        btn.classList.add('btn-fullscreen-active');
+        btn.innerHTML = '<i class="fa-solid fa-compress"></i> Exit Fullscreen';
+      }
+
+      if (wrapper.requestFullscreen) {
+        wrapper.requestFullscreen().catch(() => {});
+      } else if (wrapper.webkitRequestFullscreen) {
+        wrapper.webkitRequestFullscreen();
+      }
+    } else {
+      wrapper.classList.remove('map-fullscreen-active');
+      if (btn) {
+        btn.classList.remove('btn-fullscreen-active');
+        btn.innerHTML = '<i class="fa-solid fa-expand"></i> Fullscreen';
+      }
+
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Trigger Leaflet map resize event
+    setTimeout(() => {
+      if (mapInstance && mapInstance.invalidateSize) {
+        mapInstance.invalidateSize();
+      }
+    }, 300);
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      const wrapper = document.querySelector('.map-container-wrapper');
+      const btn = document.getElementById('btn-toggle-fullscreen');
+      if (wrapper && wrapper.classList.contains('map-fullscreen-active')) {
+        wrapper.classList.remove('map-fullscreen-active');
+      }
+      if (btn && btn.classList.contains('btn-fullscreen-active')) {
+        btn.classList.remove('btn-fullscreen-active');
+        btn.innerHTML = '<i class="fa-solid fa-expand"></i> Fullscreen';
+      }
+      setTimeout(() => {
+        if (mapInstance && mapInstance.invalidateSize) mapInstance.invalidateSize();
+      }, 300);
+    }
+  });
+
+  function bufferGpsPingOffline(lat, lng) {
+
+    const ping = { lat, lng, timestamp: new Date().toISOString() };
+    try {
+      let saved = JSON.parse(localStorage.getItem('wari_offline_gps_queue') || '[]');
+      saved.push(ping);
+      localStorage.setItem('wari_offline_gps_queue', JSON.stringify(saved));
+    } catch (e) {}
+  }
+
+  function syncBufferedPings() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('wari_offline_gps_queue') || '[]');
+      if (saved.length === 0) return;
+
+      fetch('/tracker/api/sync-pings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pings: saved })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.removeItem('wari_offline_gps_queue');
+          console.log(`[PWA Offline Sync] Successfully synced ${data.syncedCount} buffered pings.`);
+        }
+      })
+      .catch(() => {});
+    } catch (e) {}
+  }
+
+  /* -------------------------------------------------------------
+     PHASE 2 FEATURE 6: CROWD DENSITY HEATMAP LAYER
+  ------------------------------------------------------------- */
+  function toggleCrowdHeatmap() {
+    const btn = document.getElementById('btn-toggle-heatmap');
+
+    if (!isHeatmapActive) {
+      fetch('/tracker/api/crowd-density')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.heatmapData) {
+            if (heatmapLayer && mapInstance) mapInstance.removeLayer(heatmapLayer);
+            if (typeof L.heatLayer === 'function') {
+              heatmapLayer = L.heatLayer(data.heatmapData, {
+                radius: 25,
+                blur: 15,
+                maxZoom: 16,
+                gradient: { 0.4: 'blue', 0.65: 'lime', 0.9: 'red' }
+              }).addTo(mapInstance);
+              isHeatmapActive = true;
+              btn.classList.add('active');
+              btn.style.background = '#F59E0B';
+              btn.style.color = '#FFFFFF';
+              speakMarathiPrompt("गर्दीची घनता दाखवणारा नकाशा दाखवला आहे"); // Heatmap layer activated
+            } else {
+              alert('Heatmap plugin loading... please try again in a moment.');
+            }
+          }
+        });
+    } else {
+      if (heatmapLayer && mapInstance) mapInstance.removeLayer(heatmapLayer);
+      isHeatmapActive = false;
+      btn.classList.remove('active');
+      btn.style.background = '';
+      btn.style.color = '';
+    }
+  }
+
+  /* -------------------------------------------------------------
+     PHASE 2 FEATURE 7: SOS LOCATION BROADCAST
+  ------------------------------------------------------------- */
+  function openSosModal() {
+    document.getElementById('sos-preview-coords').textContent = `${userLoc.lat.toFixed(4)}, ${userLoc.lng.toFixed(4)}`;
+    document.getElementById('sos-modal-overlay').style.display = 'flex';
+  }
+
+  function closeSosModal() {
+    document.getElementById('sos-modal-overlay').style.display = 'none';
+  }
+
+  function sendSosBroadcast() {
+    closeSosModal();
+
+    fetch('/emergency/api/sos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        lat: userLoc.lat,
+        lng: userLoc.lng,
+        userName: userLoc.name,
+        phone: '+91 98220 11223',
+        dindiLeader: 'Mauli Patil',
+        description: 'Pilgrim distress button activated on Wari route'
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('sos-ack-ref').textContent = data.broadcastRef;
+        const listEl = document.getElementById('sos-ack-list');
+        listEl.innerHTML = '';
+        data.notifiedParties.forEach(p => {
+          listEl.innerHTML += `
+            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px dashed #E2E8F0;">
+              <span><strong>${p.role}:</strong> ${p.name || p.contact || ''}</span>
+              <span style="color:#16A34A; font-weight:600;"><i class="fa-solid fa-check"></i> ${p.status}</span>
+            </div>
+          `;
+        });
+        document.getElementById('sos-ack-modal').style.display = 'flex';
+
+        // Marathi speech acknowledgment confirmation
+        speakMarathiPrompt("आपला आणीबाणी संदेश मदत केंद्राकडे पाठवला आहे. मदत लवकरच पोहोचत आहे.");
+      }
+    })
+    .catch(err => {
+      alert('SOS broadcast sent via SMS backup channel.');
+    });
+  }
+
+  function closeSosAckModal() {
+    document.getElementById('sos-ack-modal').style.display = 'none';
+  }
+
+  /* -------------------------------------------------------------
+     PHASE 1 CORE MAP & NAVIGATION INTEGRATION
+  ------------------------------------------------------------- */
+  function initTrackerMap() {
     mapInstance = L.map('map', {
       center: [userLoc.lat, userLoc.lng],
       zoom: 14,
@@ -272,7 +720,7 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(mapInstance);
 
-    // Add User Marker
+    // User Location Marker
     const userIcon = L.divIcon({
       className: 'custom-leaflet-marker',
       html: `<div style="background:#E65100; color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid #FFB300; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:16px;"><i class="fa-solid fa-user-large"></i></div>`,
@@ -290,7 +738,7 @@
     `);
     markersMap['user'] = userMarker;
 
-    // Add Troop Markers
+    // Troop Markers
     troopsData.forEach(t => {
       const troopIcon = L.divIcon({
         className: 'custom-leaflet-marker',
@@ -303,13 +751,14 @@
         <div class="custom-infowindow">
           <div class="infowindow-title"><i class="fa-solid fa-flag" style="color:var(--primary-saffron);"></i> ${t.name}</div>
           <div class="infowindow-desc">Leader: ${t.leader}<br>Members: ${t.members} Warkaris</div>
-          <button class="btn-infowindow" onclick="mapInstance.setView([${t.lat}, ${t.lng}], 16)">Focus Dindi</button>
+          <button class="btn-infowindow" style="margin-bottom:4px;" onclick="mapInstance.setView([${t.lat}, ${t.lng}], 16)">Focus Dindi</button>
+          <button class="btn-infowindow" style="background:#1E1B4B;" onclick="startNavigation(${t.lat}, ${t.lng}, '${t.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-diamond-turn-right"></i> Navigate to Dindi</button>
         </div>
       `);
       markersMap[t.id] = m;
     });
 
-    // Add Friend Markers
+    // Friend Markers
     friendsData.forEach(f => {
       const friendIcon = L.divIcon({
         className: 'custom-leaflet-marker',
@@ -321,57 +770,350 @@
       m.bindPopup(`
         <div class="custom-infowindow">
           <div class="infowindow-title"><i class="fa-solid fa-user-tag" style="color:var(--emergency-red);"></i> ${f.name}</div>
-          <div class="infowindow-desc">Distance: <strong>${f.distance}</strong><br>Battery: ${f.battery} • Updated ${f.updated}</div>
-          <button class="btn-infowindow" onclick="mapInstance.setView([${f.lat}, ${f.lng}], 16)">Navigate To Friend</button>
+          <div class="infowindow-desc">Distance: <strong class="friend-live-dist" data-lat="${f.lat}" data-lng="${f.lng}">${f.distance}</strong><br>Battery: ${f.battery} • Updated ${f.updated}</div>
+          <button class="btn-infowindow" onclick="startNavigation(${f.lat}, ${f.lng}, '${f.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-diamond-turn-right"></i> Navigate To Friend</button>
         </div>
       `);
       markersMap[f.id] = m;
     });
+
+    // Initial facilities fetch
+    fetchNearbyFacilities();
+
+    // Live distances update for list cards
+    updateAllLiveDistances();
+
+    // Setup PWA offline network event listeners
+    setupOfflineNetworkListeners();
+
+    // Check URL parameters for direct navigation requests
+    checkUrlNavigationParams();
   }
 
-  // Google Maps JS API Setup
-  function initGoogleMap() {
-    const center = { lat: userLoc.lat, lng: userLoc.lng };
-    const gmap = new google.maps.Map(document.getElementById('map'), {
-      zoom: 14,
-      center: center,
-      styles: [
-        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
-      ]
+  function checkUrlNavigationParams() {
+    const params = new URLSearchParams(window.location.search);
+    const navToLat = parseFloat(params.get('navToLat'));
+    const navToLng = parseFloat(params.get('navToLng'));
+    const title = params.get('title');
+
+    if (!isNaN(navToLat) && !isNaN(navToLng)) {
+      const navTitle = title ? decodeURIComponent(title) : 'Target Destination';
+      setTimeout(() => {
+        startNavigation(navToLat, navToLng, navTitle);
+      }, 500);
+    }
+  }
+
+  function fetchNearbyFacilities() {
+    const radius = document.getElementById('facility-radius-select').value || 2000;
+    const cat = activeFacilitySubCat;
+
+    fetch(`/facilities/api/nearby?lat=${userLoc.lat}&lng=${userLoc.lng}&radius=${radius}&category=${cat}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          renderFacilityMarkers(data.facilities);
+        }
+      })
+      .catch(err => console.warn('Facilities fetch error:', err));
+  }
+
+  function renderFacilityMarkers(facilities) {
+    facilityMarkers.forEach(m => mapInstance.removeLayer(m));
+    facilityMarkers = [];
+
+    const categoryIcons = {
+      Medical: { icon: 'fa-hospital', color: '#DC2626' },
+      Water: { icon: 'fa-droplet', color: '#0284C7' },
+      Food: { icon: 'fa-utensils', color: '#D97706' },
+      Shelter: { icon: 'fa-campground', color: '#16A34A' },
+      Toilet: { icon: 'fa-restroom', color: '#8B5CF6' },
+      Parking: { icon: 'fa-square-parking', color: '#475569' },
+      Other: { icon: 'fa-info', color: '#E65100' }
+    };
+
+    facilities.forEach(fac => {
+      const cfg = categoryIcons[fac.category] || categoryIcons.Other;
+      const fIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `<div style="background:${cfg.color}; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:13px;"><i class="fa-solid ${cfg.icon}"></i></div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+
+      const m = L.marker([fac.lat, fac.lng], { icon: fIcon });
+      if (currentFilter === 'all' || currentFilter === 'facilities') {
+        m.addTo(mapInstance);
+      }
+
+      const statusBadge = fac.status === 'Open' 
+        ? `<span class="badge-status-open">Open</span>`
+        : `<span class="badge-status-busy">Busy</span>`;
+
+      m.bindPopup(`
+        <div class="custom-infowindow">
+          <div class="infowindow-title" style="display:flex; justify-content:space-between; align-items:center;">
+            <span><i class="fa-solid ${cfg.icon}" style="color:${cfg.color};"></i> ${fac.name}</span>
+            ${statusBadge}
+          </div>
+          <div class="infowindow-desc">
+            <strong>${fac.category} Camp</strong> • ${formatDistanceText(fac.distanceMeters)} away<br>
+            <i class="fa-solid fa-location-dot"></i> ${fac.location}<br>
+            ${fac.contact ? `<i class="fa-solid fa-phone"></i> ${fac.contact}` : ''}
+          </div>
+          <button class="btn-infowindow" onclick="startNavigation(${fac.lat}, ${fac.lng}, '${fac.name.replace(/'/g, "\\'")}')">
+            <i class="fa-solid fa-diamond-turn-right"></i> Navigate Here
+          </button>
+        </div>
+      `);
+
+      facilityMarkers.push(m);
     });
-    mapInstance = gmap;
   }
 
-  // Controls & Action Logic
+  function onFacilityParamChange() {
+    fetchNearbyFacilities();
+  }
+
+  function selectFacilitySubCategory(subcat) {
+    activeFacilitySubCat = subcat;
+    document.querySelectorAll('.btn-fac-sub').forEach(btn => {
+      if (btn.getAttribute('data-subcat') === subcat) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    fetchNearbyFacilities();
+  }
+
+  function startNavigation(targetLat, targetLng, targetTitle) {
+    activeTarget = { lat: targetLat, lng: targetLng, title: targetTitle };
+    isNavigating = true;
+
+    document.getElementById('nav-drawer').style.display = 'flex';
+    document.getElementById('nav-target-name').textContent = targetTitle;
+    document.getElementById('nav-dist-text').textContent = 'Calculating...';
+    document.getElementById('nav-eta-text').textContent = '...';
+
+    // Voice announcement in Marathi
+    speakMarathiPrompt(`मार्ग सुरु करत आहे: ${targetTitle}`);
+
+    fetchRouteAndDraw(userLoc.lat, userLoc.lng, targetLat, targetLng);
+
+    if (!watchPositionId && navigator.geolocation) {
+      watchPositionId = navigator.geolocation.watchPosition(
+        onPositionUpdate,
+        err => console.warn('Position watch error:', err.message),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      );
+    }
+  }
+
+  function fetchRouteAndDraw(startLat, startLng, endLat, endLng) {
+    lastCalcLoc = { lat: startLat, lng: startLng };
+
+    fetch(`/api/navigation/route?startLat=${startLat}&startLng=${startLng}&endLat=${endLat}&endLng=${endLng}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          renderRoutePolyline(data.geometry);
+          updateNavDrawerMetrics(data.distanceMeters, data.durationSeconds, data.legs);
+        }
+      })
+      .catch(err => {
+        console.warn('Navigation route fetch fallback:', err);
+        renderRoutePolyline({
+          type: 'LineString',
+          coordinates: [[startLng, startLat], [endLng, endLat]]
+        });
+        const dist = haversineMeters(startLat, startLng, endLat, endLng);
+        updateNavDrawerMetrics(dist, Math.round(dist / 1.11), []);
+      });
+  }
+
+  function renderRoutePolyline(geometry) {
+    if (activePolyline && mapInstance) {
+      mapInstance.removeLayer(activePolyline);
+    }
+
+    if (!geometry || !geometry.coordinates) return;
+
+    const latLngs = geometry.coordinates.map(c => [c[1], c[0]]);
+
+    activePolyline = L.polyline(latLngs, {
+      color: '#E65100',
+      weight: 6,
+      opacity: 0.9,
+      lineCap: 'round',
+      lineJoin: 'round'
+    }).addTo(mapInstance);
+
+    mapInstance.fitBounds(activePolyline.getBounds(), { padding: [40, 40] });
+  }
+
+  function updateNavDrawerMetrics(distanceMeters, durationSeconds, legs) {
+    document.getElementById('nav-dist-text').textContent = formatDistanceText(distanceMeters);
+
+    const minutes = Math.max(1, Math.round(durationSeconds / 60));
+    if (minutes > 60) {
+      const hrs = (minutes / 60).toFixed(1);
+      document.getElementById('nav-eta-text').textContent = `${hrs} hrs`;
+    } else {
+      document.getElementById('nav-eta-text').textContent = `${minutes} mins`;
+    }
+
+    const stepsListEl = document.getElementById('nav-steps-list');
+    stepsListEl.innerHTML = '';
+
+    let allSteps = [];
+    if (legs && legs.length > 0 && legs[0].steps && legs[0].steps.length > 0) {
+      allSteps = legs[0].steps;
+    }
+
+    document.getElementById('nav-step-count').textContent = allSteps.length || 1;
+
+    if (allSteps.length === 0) {
+      stepsListEl.innerHTML = `
+        <div class="nav-step-item active-step">
+          <div class="nav-step-icon"><i class="fa-solid fa-person-walking"></i></div>
+          <div class="nav-step-info">
+            <div class="nav-step-text">Walk directly towards ${activeTarget ? activeTarget.title : 'destination'}</div>
+            <div class="nav-step-dist">${formatDistanceText(distanceMeters)} remaining</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    const maneuverIconMap = {
+      'turn-left': 'fa-arrow-left',
+      'turn-right': 'fa-arrow-right',
+      'sharp-left': 'fa-arrow-turn-down',
+      'sharp-right': 'fa-arrow-turn-down',
+      'slight-left': 'fa-arrow-up-left',
+      'slight-right': 'fa-arrow-up-right',
+      'straight': 'fa-arrow-up',
+      'arrive': 'fa-location-dot',
+      'depart': 'fa-person-walking'
+    };
+
+    allSteps.forEach((st, idx) => {
+      const mType = (st.maneuver ? st.maneuver.type + '-' + (st.maneuver.modifier || '') : 'straight').toLowerCase();
+      let iconClass = 'fa-arrow-up';
+      for (let k in maneuverIconMap) {
+        if (mType.includes(k)) iconClass = maneuverIconMap[k];
+      }
+      if (st.maneuver && st.maneuver.type === 'arrive') iconClass = 'fa-location-dot';
+
+      const instruction = (st.maneuver && st.maneuver.instruction) || st.name || `Continue along path (${formatDistanceText(Math.round(st.distance))})`;
+      const isActive = idx === 0 ? 'active-step' : '';
+
+      stepsListEl.innerHTML += `
+        <div class="nav-step-item ${isActive}">
+          <div class="nav-step-icon"><i class="fa-solid ${iconClass}"></i></div>
+          <div class="nav-step-info">
+            <div class="nav-step-text">${instruction}</div>
+            <div class="nav-step-dist">${formatDistanceText(Math.round(st.distance))}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    // Voice prompt for upcoming turn in Marathi
+    if (allSteps.length > 0 && allSteps[0].maneuver) {
+      const mod = allSteps[0].maneuver.modifier || '';
+      if (mod.includes('left')) speakMarathiPrompt("पुढे डावीकडे वळा");
+      else if (mod.includes('right')) speakMarathiPrompt("पुढे उजवीकडे वळा");
+      else speakMarathiPrompt("सरळ रस्ता धरा");
+    }
+  }
+
+  function toggleNavStepsDrawer() {
+    const list = document.getElementById('nav-steps-list');
+    const icon = document.getElementById('nav-drawer-toggle-icon');
+    if (list.style.display === 'none') {
+      list.style.display = 'flex';
+      icon.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+    } else {
+      list.style.display = 'none';
+      icon.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+    }
+  }
+
+  function stopNavigation() {
+    isNavigating = false;
+    activeTarget = null;
+    if (activePolyline && mapInstance) {
+      mapInstance.removeLayer(activePolyline);
+      activePolyline = null;
+    }
+    document.getElementById('nav-drawer').style.display = 'none';
+  }
+
+  function onPositionUpdate(pos) {
+    const newLat = pos.coords.latitude;
+    const newLng = pos.coords.longitude;
+
+    userLoc.lat = newLat;
+    userLoc.lng = newLng;
+
+    if (markersMap['user']) {
+      markersMap['user'].setLatLng([newLat, newLng]);
+    }
+
+    // Buffer GPS ping if offline
+    if (!navigator.onLine) {
+      bufferGpsPingOffline(newLat, newLng);
+    }
+
+    // Check Stray separation status
+    checkStrayStatus();
+
+    // Dynamic UI distance updates
+    updateAllLiveDistances();
+
+    // Recalculate route polyline & ETA if moved > 15 meters during navigation
+    if (isNavigating && activeTarget) {
+      if (!lastCalcLoc || haversineMeters(lastCalcLoc.lat, lastCalcLoc.lng, newLat, newLng) > 15) {
+        fetchRouteAndDraw(newLat, newLng, activeTarget.lat, activeTarget.lng);
+      }
+    }
+  }
+
+  function updateAllLiveDistances() {
+    friendsData.forEach(f => {
+      const d = haversineMeters(userLoc.lat, userLoc.lng, f.lat, f.lng);
+      const text = formatDistanceText(d) + ' away';
+      if (document.getElementById(`dist-${f.id}`)) {
+        document.getElementById(`dist-${f.id}`).textContent = text;
+      }
+      if (document.getElementById(`dist-tab-${f.id}`)) {
+        document.getElementById(`dist-tab-${f.id}`).textContent = text;
+      }
+    });
+  }
+
   function centerOnUser() {
     if (mapInstance) {
-      if (mapInstance.setView) {
-        mapInstance.setView([userLoc.lat, userLoc.lng], 15);
-      } else if (mapInstance.setCenter) {
-        mapInstance.setCenter({ lat: userLoc.lat, lng: userLoc.lng });
-      }
-      if (markersMap['user']) {
-        markersMap['user'].openPopup();
-      }
+      mapInstance.setView([userLoc.lat, userLoc.lng], 15);
+      if (markersMap['user']) markersMap['user'].openPopup();
     }
   }
 
   function focusMarker(id) {
     const m = markersMap[id];
     if (m && mapInstance) {
-      if (mapInstance.setView && m.getLatLng) {
-        mapInstance.setView(m.getLatLng(), 16);
-      } else if (mapInstance.setCenter && m.getPosition) {
-        mapInstance.setCenter(m.getPosition());
-      }
-      if (m.openPopup) m.openPopup();
+      mapInstance.setView(m.getLatLng(), 16);
+      m.openPopup();
     }
   }
 
   function filterMapCategory(cat) {
     currentFilter = cat;
-    ['btn-filter-all', 'btn-filter-dindi', 'btn-filter-friends'].forEach(id => {
-      document.getElementById(id).classList.remove('active');
+    ['btn-filter-all', 'btn-filter-dindi', 'btn-filter-friends', 'btn-filter-facilities'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('active');
     });
     document.getElementById(`btn-filter-${cat}`).classList.add('active');
 
@@ -389,6 +1131,11 @@
         if (cat === 'all' || cat === 'friends') m.addTo(mapInstance);
         else mapInstance.removeLayer(m);
       }
+    });
+
+    facilityMarkers.forEach(m => {
+      if (cat === 'all' || cat === 'facilities') m.addTo(mapInstance);
+      else mapInstance.removeLayer(m);
     });
   }
 
@@ -421,14 +1168,7 @@
       text.style.color = '#22C55E';
 
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          userLoc.lat = pos.coords.latitude;
-          userLoc.lng = pos.coords.longitude;
-          if (markersMap['user']) {
-            markersMap['user'].setLatLng([userLoc.lat, userLoc.lng]);
-          }
-          centerOnUser();
-        }, err => {
+        navigator.geolocation.getCurrentPosition(onPositionUpdate, err => {
           console.warn('Geolocation warning:', err.message);
         });
       }

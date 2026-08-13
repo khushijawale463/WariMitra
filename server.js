@@ -9,6 +9,7 @@ const facilitiesRouter = require('./routes/facilities');
 const emergencyRouter = require('./routes/emergency');
 const sevaRouter = require('./routes/seva');
 const trackerRouter = require('./routes/tracker');
+const navigationRouter = require('./routes/navigation');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,8 @@ app.use('/facilities', facilitiesRouter);
 app.use('/emergency', emergencyRouter);
 app.use('/seva', sevaRouter);
 app.use('/tracker', trackerRouter);
+app.use('/api/navigation', navigationRouter);
+
 
 // 404 handler
 app.use((req, res) => {
