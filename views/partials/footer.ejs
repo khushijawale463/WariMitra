@@ -355,5 +355,29 @@
       setLanguage(savedLang);
     });
   </script>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+
+<script type="module">
+  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+createChat({
+  webhookUrl: 'https://truptipatil.app.n8n.cloud/webhook/462721aa-af6a-4558-95f0-e0150b35ab94/chat',
+
+  initialMessages: [
+    'Namaskar! 🙏',
+    'I am WariMitra, your Wari assistant.',
+    'How can I help you today?'
+  ],
+
+  i18n: {
+    en: {
+      title: 'WariMitra 🤖',
+      subtitle: 'Your Pandharpur Wari Assistant',
+      inputPlaceholder: 'Ask about Wari...',
+      getStarted: 'Start Chat'
+    }
+  }
+});
+</script>
 </body>
 </html>
