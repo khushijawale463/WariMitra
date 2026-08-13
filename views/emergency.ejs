@@ -1,69 +1,127 @@
 <%- include('partials/header') %>
 
+<div class="page-header emergency-header">
+  <h2 class="page-title" style="color: var(--emergency-red);" data-i18n="emg-title">
+    <i class="fa-solid fa-truck-medical"></i> 24/7 Emergency Support &amp; SOS Dispatch
+  </h2>
+  <p class="page-description" data-i18n="emg-desc">Immediate helpline access and rapid emergency dispatch for Warkari pilgrims along the Pandharpur route.</p>
+</div>
+
 <section>
-  <h2>Emergency Support</h2>
+  <!-- Urgent Helplines Grid -->
+  <h3 style="margin-bottom: 16px; font-size: 1.3rem;" data-i18n="emg-helpline-title"><i class="fa-solid fa-phone-volume" style="color: var(--emergency-red);"></i> Toll-Free Emergency Helplines</h3>
+  <div class="cards-grid">
+    <% helplines.forEach(function(h) { %>
+      <div class="helpline-card">
+        <div class="helpline-info">
+          <h4><%= h.name %></h4>
+          <span class="helpline-number"><%= h.number %></span>
+        </div>
+        <a href="tel:<%= h.number %>" class="btn-call" title="Call Now">
+          <i class="fa-solid fa-phone"></i>
+        </a>
+      </div>
+    <% }); %>
+  </div>
 
-  <% if (typeof submitted !== 'undefined') { %> <% } %>
+  <!-- Submit Emergency Report Form Card -->
+  <div class="form-card" style="border-top: 4px solid var(--emergency-red); margin-top: 32px;">
+    <h3 class="card-title" style="color: var(--emergency-red); margin-bottom: 12px;" data-i18n="emg-form-title">
+      <i class="fa-solid fa-triangle-exclamation"></i> Report an Emergency / Request SOS Assistance
+    </h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;" data-i18n="emg-form-subtitle">
+      Fill this form immediately if you or a fellow pilgrim needs medical attention, security help, or assistance finding a lost family member.
+    </p>
 
-  <h3>Helpline Numbers</h3>
-  <table>
-    <thead>
-      <tr><th>Service</th><th>Number</th></tr>
-    </thead>
-    <tbody>
-      <% helplines.forEach(function(h) { %>
-        <tr><td><%= h.name %></td><td><%= h.number %></td></tr>
-      <% }); %>
-    </tbody>
-  </table>
+    <form method="POST" action="/emergency">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name" class="form-label" data-i18n="lbl-emg-name">Your Full Name *</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Ramesh Patil" data-i18n-ph="ph-emg-name" required>
+        </div>
 
-  <h3>Report an Emergency</h3>
-  <p>Fill this form if you or someone nearby needs urgent help. This will be visible to the response team.</p>
-  <form method="POST" action="/emergency" class="stack-form">
-    <label for="name">Your Name</label>
-    <input type="text" id="name" name="name" required>
+        <div class="form-group">
+          <label for="phone" class="form-label" data-i18n="lbl-emg-phone">Phone Number *</label>
+          <input type="tel" id="phone" name="phone" class="form-control" placeholder="e.g. 9876543210" data-i18n-ph="ph-emg-phone" required>
+        </div>
 
-    <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" name="phone" required>
+        <div class="form-group">
+          <label for="type" class="form-label" data-i18n="lbl-emg-cat">Emergency Category *</label>
+          <select id="type" name="type" class="form-control" required>
+            <option value="Medical" data-i18n="opt-emg-med">🚨 Medical Emergency</option>
+            <option value="Lost Person" data-i18n="opt-emg-lost">🔍 Lost Person / Family Member</option>
+            <option value="Security" data-i18n="opt-emg-sec">🛡️ Police / Security Help</option>
+            <option value="Fire" data-i18n="opt-emg-fire">🔥 Fire Incident</option>
+            <option value="Other" data-i18n="opt-emg-other">⚠️ Other Urgent Issue</option>
+          </select>
+        </div>
 
-    <label for="type">Emergency Type</label>
-    <select id="type" name="type" required>
-      <option value="Medical">Medical</option>
-      <option value="Lost Person">Lost Person</option>
-      <option value="Security">Security</option>
-      <option value="Fire">Fire</option>
-      <option value="Other">Other</option>
-    </select>
+        <div class="form-group">
+          <label for="location" class="form-label" data-i18n="lbl-emg-loc">Current Exact Location *</label>
+          <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Near Wakhri Ringan Ground, Pillar No. 12" data-i18n-ph="ph-emg-loc" required>
+        </div>
+      </div>
 
-    <label for="location">Current Location</label>
-    <input type="text" id="location" name="location" placeholder="e.g. Near Wakhri Phata" required>
+      <div class="form-group">
+        <label for="description" class="form-label" data-i18n="lbl-emg-desc">Emergency Description &amp; Details</label>
+        <textarea id="description" name="description" class="form-control" rows="3" placeholder="Describe the situation (e.g., patient condition, age of lost person, clothes worn, landmarks nearby)" data-i18n-ph="ph-emg-desc"></textarea>
+      </div>
 
-    <label for="description">Description</label>
-    <textarea id="description" name="description" rows="3"></textarea>
+      <button type="submit" class="btn btn-emergency" data-i18n="btn-sub-emg">
+        <i class="fa-solid fa-paper-plane"></i> Submit Emergency SOS Alert
+      </button>
+    </form>
+  </div>
 
-    <button type="submit">Submit Emergency Report</button>
-  </form>
+  <!-- Recent Emergency Dispatch Log -->
+  <h3 style="margin-top: 40px; margin-bottom: 16px; font-size: 1.3rem;" data-i18n="emg-log-title">
+    <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-saffron);"></i> Live Response Log
+  </h3>
 
-  <h3>Recent Reports</h3>
   <% if (reports.length === 0) { %>
-    <p><em>No reports yet.</em></p>
+    <div class="empty-state">
+      <i class="fa-solid fa-circle-check" style="color: #166534;"></i>
+      <h3 data-i18n="emg-empty-title">No Active Emergency Reports</h3>
+      <p data-i18n="emg-empty-desc">The route response teams are on alert. Stay safe!</p>
+    </div>
   <% } else { %>
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Phone</th><th>Type</th><th>Location</th><th>Status</th></tr>
-      </thead>
-      <tbody>
-        <% reports.forEach(function(r) { %>
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
           <tr>
-            <td><%= r.name %></td>
-            <td><%= r.phone %></td>
-            <td><%= r.type %></td>
-            <td><%= r.location %></td>
-            <td><%= r.status %></td>
+            <th data-i18n="th-rep-name">Reporter Name</th>
+            <th data-i18n="th-rep-phone">Contact Phone</th>
+            <th data-i18n="th-rep-type">Emergency Type</th>
+            <th data-i18n="th-rep-loc">Location</th>
+            <th data-i18n="th-rep-status">Status</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% reports.forEach(function(r) { %>
+            <tr>
+              <td><strong><%= r.name %></strong></td>
+              <td><a href="tel:<%= r.phone %>"><i class="fa-solid fa-phone"></i> <%= r.phone %></a></td>
+              <td>
+                <span class="badge" style="background: var(--emergency-bg); color: var(--emergency-red); border: 1px solid var(--emergency-border);">
+                  <%= r.type %>
+                </span>
+              </td>
+              <td><i class="fa-solid fa-location-dot" style="color: var(--primary-saffron);"></i> <%= r.location %></td>
+              <td>
+                <% 
+                  let statusBadge = 'badge-status-pending';
+                  if (r.status === 'Resolved') statusBadge = 'badge-status-resolved';
+                  else if (r.status === 'Dispatched') statusBadge = 'badge-status-dispatched';
+                %>
+                <span class="badge <%= statusBadge %>">
+                  <i class="fa-solid fa-circle-dot"></i> <%= r.status %>
+                </span>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
   <% } %>
 </section>
 

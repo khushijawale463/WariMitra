@@ -1,31 +1,98 @@
 <%- include('partials/header') %>
 
+<!-- Hero Banner Section -->
+<section class="hero-section">
+  <div class="hero-overlay-glow"></div>
+  <div class="hero-content">
+    <div class="hero-badge" data-i18n="hero-badge">
+      <i class="fa-solid fa-peace"></i> ॥ जय जय राम कृष्ण हरी ॥
+    </div>
+    <h1 class="hero-title" data-i18n="hero-title">Pandharpur Wari Digital Support &amp; Seva Portal</h1>
+    <p class="hero-description" data-i18n="hero-desc">
+      Connecting lakhs of Warkari pilgrims and remote devotees. Access real-time route facilities, 
+      24/7 medical and emergency support, or offer digital Seva from anywhere in the world.
+    </p>
+    <div class="hero-cta-group">
+      <a href="/facilities" class="btn btn-primary" data-i18n="cta-facilities">
+        <i class="fa-solid fa-location-dot"></i> Find Nearby Facilities
+      </a>
+      <a href="/emergency" class="btn btn-emergency" data-i18n="cta-sos">
+        <i class="fa-solid fa-phone-volume"></i> Emergency SOS Support
+      </a>
+      <a href="/seva" class="btn btn-secondary" data-i18n="cta-seva">
+        <i class="fa-solid fa-hand-holding-heart"></i> Offer Digital Seva
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 3-Column Feature Cards Section -->
 <section>
-  <h2>About This Portal</h2>
-  <p>
-    The Pandharpur Wari is one of the largest annual pilgrimages, bringing together lakhs of devotees (warkaris)
-    walking together towards Pandharpur. Despite its scale, pilgrims and remote devotees often lack easy access
-    to information, navigation help, emergency support, and ways to participate digitally.
-  </p>
+  <div class="section-header">
+    <span class="section-subtitle" data-i18n="section-sub">Pilgrimage Care &amp; Support</span>
+    <h2 class="section-title" data-i18n="section-title">Empowering the Wari Journey</h2>
+  </div>
 
-  <h3>Problem Statement</h3>
-  <p>
-    Lack of accessible information, navigation, emergency support, and digital participation options reduces
-    the overall experience and inclusiveness of the Pandharpur Wari.
-  </p>
+  <div class="feature-grid">
+    <!-- Card 1: Problem Statement -->
+    <div class="feature-card alert-card">
+      <div class="card-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="card-title" data-i18n="card1-title">Problem Statement</h3>
+      <p class="card-text" data-i18n="card1-text">
+        During the grand annual Pandharpur Wari, over 10-15 lakh pilgrims march across hundreds of kilometers. 
+        Pilgrims and remote devotees often face critical challenges: lack of accessible route information, 
+        medical camp navigation, emergency response delay, and limited digital participation options.
+      </p>
+      <div class="feature-item">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span data-i18n="card1-highlight">Urgent need for route-wide medical, food &amp; shelter visibility</span>
+      </div>
+    </div>
 
-  <h3>Our Solution</h3>
-  <p>
-    This portal provides nearby facility information, emergency support, and a digital seva platform
-    for remote devotees.
-  </p>
+    <!-- Card 2: Our Solution -->
+    <div class="feature-card">
+      <div class="card-icon">
+        <i class="fa-solid fa-compass"></i>
+      </div>
+      <h3 class="card-title" data-i18n="card2-title">Our Digital Solution</h3>
+      <p class="card-text" data-i18n="card2-text">
+        <strong>WariMitra</strong> is a centralized digital support portal that bridges the gap between ground infrastructure 
+        and pilgrims. It provides live facility mapping along the Palkhi route, a direct emergency SOS dispatcher, 
+        and an online platform for global devotees to offer Seva.
+      </p>
+      <div class="feature-item">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="card2-highlight">24/7 centralized helpline and real-time report dispatcher</span>
+      </div>
+    </div>
 
-  <h3>What You Can Do Here</h3>
-  <ul>
-    <li><a href="/facilities">Find nearby facilities</a> — medical camps, food, water, toilets, and shelter points along the route.</li>
-    <li><a href="/emergency">Get emergency support</a> — helpline numbers and a quick form to report an emergency.</li>
-    <li><a href="/seva">Participate in Digital Seva</a> — remote devotees can contribute to Annadan, medical seva, donations, and volunteering.</li>
-  </ul>
+    <!-- Card 3: What You Can Do Here -->
+    <div class="feature-card">
+      <div class="card-icon">
+        <i class="fa-solid fa-hand-holding-hand"></i>
+      </div>
+      <h3 class="card-title" data-i18n="card3-title">What You Can Do Here</h3>
+      <p class="card-text" data-i18n="card3-desc">
+        Whether walking in the Palkhi or supporting remotely from home, WariMitra offers tools tailored to your needs:
+      </p>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <i class="fa-solid fa-map-pin"></i>
+          <a href="/facilities" data-i18n="card3-link1"><strong>Find Facilities:</strong> Medical, Food, Water, Toilets &amp; Shelter</a>
+        </li>
+        <li class="feature-item">
+          <i class="fa-solid fa-phone-flip"></i>
+          <a href="/emergency" data-i18n="card3-link2"><strong>Get SOS Support:</strong> Direct police/medical dispatch &amp; report form</a>
+        </li>
+        <li class="feature-item">
+          <i class="fa-solid fa-heart"></i>
+          <a href="/seva" data-i18n="card3-link3"><strong>Offer Digital Seva:</strong> Contribute Annadan, Medical supplies &amp; Volunteering</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </section>
 
 <%- include('partials/footer') %>

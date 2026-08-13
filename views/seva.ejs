@@ -1,56 +1,111 @@
 <%- include('partials/header') %>
 
+<div class="page-header">
+  <h2 class="page-title" data-i18n="seva-title"><i class="fa-solid fa-hand-holding-heart" style="color: var(--primary-saffron);"></i> Digital Seva &amp; Remote Devotee Participation</h2>
+  <p class="page-description" data-i18n="seva-desc">Can't join the physical Wari procession? Remote devotees from anywhere in the world can participate by offering Seva — Annadan food sponsorship, medical supplies, monetary donations, or volunteer coordination.</p>
+</div>
+
 <section>
-  <h2>Digital Seva</h2>
-  <p>
-    Can't join the Wari in person? Remote devotees can still participate by offering seva
-    (service) — Annadan, medical support, donations, or volunteering for on-ground coordination.
-  </p>
+  <!-- Seva Category Overview Grid -->
+  <h3 style="margin-bottom: 16px; font-size: 1.3rem;" data-i18n="seva-ways-title"><i class="fa-solid fa-dharmachakra" style="color: var(--primary-saffron);"></i> Ways You Can Offer Seva</h3>
+  
+  <div class="feature-grid" style="margin-bottom: 36px;">
+    <div class="feature-card">
+      <div class="card-icon"><i class="fa-solid fa-bowl-rice"></i></div>
+      <h4 class="card-title" data-i18n="card-annadan-title">Annadan Seva</h4>
+      <p class="card-text" data-i18n="card-annadan-desc">Sponsor meals, tea, milk, or drinking water packets for lakhs of walking Warkari pilgrims along the route stops.</p>
+    </div>
 
-  <h3>Register Your Seva</h3>
-  <form method="POST" action="/seva" class="stack-form">
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required>
+    <div class="feature-card">
+      <div class="card-icon"><i class="fa-solid fa-kit-medical"></i></div>
+      <h4 class="card-title" data-i18n="card-medseva-title">Medical Seva</h4>
+      <p class="card-text" data-i18n="card-medseva-desc">Contribute essential first-aid kits, foot care ointments, pain relief sprays, or volunteer doctor services.</p>
+    </div>
 
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
+    <div class="feature-card">
+      <div class="card-icon"><i class="fa-solid fa-user-group"></i></div>
+      <h4 class="card-title" data-i18n="card-vol-title">Volunteer Support</h4>
+      <p class="card-text" data-i18n="card-vol-desc">Join as on-ground or remote digital volunteers to coordinate crowds, manage information desks, or update route info.</p>
+    </div>
+  </div>
 
-    <label for="phone">Phone Number</label>
-    <input type="tel" id="phone" name="phone" required>
+  <!-- Registration Form Card -->
+  <div class="form-card">
+    <h3 class="card-title" style="margin-bottom: 12px;" data-i18n="seva-form-title"><i class="fa-solid fa-pen-to-square" style="color: var(--primary-saffron);"></i> Register Your Digital Seva Offer</h3>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px;" data-i18n="seva-form-desc">Submit your details and our team will get in touch to connect your contribution with verified Wari camps.</p>
 
-    <label for="sevaType">Type of Seva</label>
-    <select id="sevaType" name="sevaType" required>
-      <option value="Annadan (Food Seva)">Annadan (Food Seva)</option>
-      <option value="Medical Seva">Medical Seva</option>
-      <option value="Donation">Donation</option>
-      <option value="Volunteer Support">Volunteer Support</option>
-      <option value="Other">Other</option>
-    </select>
+    <form method="POST" action="/seva">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name" class="form-label" data-i18n="lbl-seva-name">Full Name *</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Sunita Deshmukh" data-i18n-ph="ph-seva-name" required>
+        </div>
 
-    <label for="message">Message (optional)</label>
-    <textarea id="message" name="message" rows="3"></textarea>
+        <div class="form-group">
+          <label for="email" class="form-label" data-i18n="lbl-seva-email">Email Address *</label>
+          <input type="email" id="email" name="email" class="form-control" placeholder="e.g. sunita@example.com" data-i18n-ph="ph-seva-email" required>
+        </div>
 
-    <button type="submit">Submit Seva Request</button>
-  </form>
+        <div class="form-group">
+          <label for="phone" class="form-label" data-i18n="lbl-seva-phone">Phone / WhatsApp Number *</label>
+          <input type="tel" id="phone" name="phone" class="form-control" placeholder="e.g. 9876543210" data-i18n-ph="ph-seva-phone" required>
+        </div>
 
-  <h3>Recent Seva Contributions</h3>
+        <div class="form-group">
+          <label for="sevaType" class="form-label" data-i18n="lbl-seva-type">Type of Seva Offered *</label>
+          <select id="sevaType" name="sevaType" class="form-control" required>
+            <option value="Annadan (Food Seva)" data-i18n="opt-seva-annadan">🍲 Annadan (Food &amp; Water Seva)</option>
+            <option value="Medical Seva" data-i18n="opt-seva-med">🏥 Medical Seva &amp; Supplies</option>
+            <option value="Donation" data-i18n="opt-seva-don">💰 Monetary Donation</option>
+            <option value="Volunteer Support" data-i18n="opt-seva-vol">🤝 Volunteer Support / Coordination</option>
+            <option value="Other" data-i18n="opt-seva-oth">✨ Other Devotional Support</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="message" class="form-label" data-i18n="lbl-seva-msg">Message / Contribution Details (Optional)</label>
+        <textarea id="message" name="message" class="form-control" rows="3" placeholder="Specify quantity, preferred location, or special wishes..." data-i18n-ph="ph-seva-msg"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" data-i18n="btn-sub-seva">
+        <i class="fa-solid fa-heart-circle-check"></i> Register Seva Offer
+      </button>
+    </form>
+  </div>
+
+  <!-- Recent Seva Wall -->
+  <h3 style="margin-top: 40px; margin-bottom: 16px; font-size: 1.3rem;" data-i18n="seva-recent-title">
+    <i class="fa-solid fa-hands-holding-circle" style="color: var(--primary-saffron);"></i> Recent Seva Contributions
+  </h3>
+
   <% if (sevas.length === 0) { %>
-    <p><em>No seva requests yet. Be the first to contribute.</em></p>
+    <div class="empty-state">
+      <i class="fa-solid fa-hands-praying"></i>
+      <h3 data-i18n="seva-empty-title">Be the First Devotee to Register Seva</h3>
+      <p data-i18n="seva-empty-desc">Your contribution will bless and support thousands of Warkaris on their journey.</p>
+    </div>
   <% } else { %>
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Type of Seva</th><th>Message</th></tr>
-      </thead>
-      <tbody>
-        <% sevas.forEach(function(s) { %>
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
           <tr>
-            <td><%= s.name %></td>
-            <td><%= s.sevaType %></td>
-            <td><%= s.message || '-' %></td>
+            <th data-i18n="th-dev-name">Devotee Name</th>
+            <th data-i18n="th-dev-type">Type of Seva</th>
+            <th data-i18n="th-dev-msg">Message / Notes</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% sevas.forEach(function(s) { %>
+            <tr>
+              <td><strong><i class="fa-solid fa-user-heart" style="color: var(--primary-saffron);"></i> <%= s.name %></strong></td>
+              <td><span class="badge badge-food"><%= s.sevaType %></span></td>
+              <td><%= s.message || '-' %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
   <% } %>
 </section>
 

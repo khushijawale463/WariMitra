@@ -11,6 +11,9 @@ const facilitySchema = new mongoose.Schema({
   landmark: { type: String },
   contact: { type: String },
   description: { type: String },
+  mapUrl: { type: String },
+  is24x7: { type: Boolean, default: true },
+  capacityInfo: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

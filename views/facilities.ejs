@@ -1,88 +1,138 @@
 <%- include('partials/header') %>
 
-<section>
-  <h2>Nearby Facilities</h2>
-  <p>Find medical camps, food, water, toilets, shelter, and parking points along the Wari route.</p>
+<div class="page-header">
+  <h2 class="page-title" data-i18n="fac-title"><i class="fa-solid fa-map-location-dot" style="color: var(--primary-saffron);"></i> Nearby Facilities &amp; Service Camps</h2>
+  <p class="page-description" data-i18n="fac-desc">Find essential medical camps, food distribution (Annadan), drinking water, toilets, shelters, and parking along the Palkhi route.</p>
+</div>
 
-  <form method="GET" action="/facilities" class="inline-form">
-    <label for="category">Filter by category:</label>
-    <select name="category" id="category" onchange="this.form.submit()">
-      <option value="" <%= selectedCategory === '' ? 'selected' : '' %>>All</option>
-      <option value="Medical" <%= selectedCategory === 'Medical' ? 'selected' : '' %>>Medical</option>
-      <option value="Food" <%= selectedCategory === 'Food' ? 'selected' : '' %>>Food</option>
-      <option value="Water" <%= selectedCategory === 'Water' ? 'selected' : '' %>>Water</option>
-      <option value="Toilet" <%= selectedCategory === 'Toilet' ? 'selected' : '' %>>Toilet</option>
-      <option value="Shelter" <%= selectedCategory === 'Shelter' ? 'selected' : '' %>>Shelter</option>
-      <option value="Parking" <%= selectedCategory === 'Parking' ? 'selected' : '' %>>Parking</option>
-      <option value="Other" <%= selectedCategory === 'Other' ? 'selected' : '' %>>Other</option>
+<section>
+  <!-- Category Filter Bar -->
+  <form method="GET" action="/facilities" class="filter-bar">
+    <label for="category" class="form-label" style="margin: 0;" data-i18n="fac-filter-lbl"><i class="fa-solid fa-filter" style="color: var(--primary-saffron);"></i> Filter Category:</label>
+    <select name="category" id="category" class="form-control" style="max-width: 220px;" onchange="this.form.submit()">
+      <option value="" <%= selectedCategory === '' ? 'selected' : '' %> data-i18n="opt-all">All Categories</option>
+      <option value="Medical" <%= selectedCategory === 'Medical' ? 'selected' : '' %> data-i18n="opt-med">🏥 Medical Camps</option>
+      <option value="Food" <%= selectedCategory === 'Food' ? 'selected' : '' %> data-i18n="opt-food">🍲 Food / Annadan</option>
+      <option value="Water" <%= selectedCategory === 'Water' ? 'selected' : '' %> data-i18n="opt-water">💧 Drinking Water</option>
+      <option value="Toilet" <%= selectedCategory === 'Toilet' ? 'selected' : '' %> data-i18n="opt-toilet">🚻 Toilets</option>
+      <option value="Shelter" <%= selectedCategory === 'Shelter' ? 'selected' : '' %> data-i18n="opt-shelter">⛺ Shelter &amp; Rest</option>
+      <option value="Parking" <%= selectedCategory === 'Parking' ? 'selected' : '' %> data-i18n="opt-parking">🅿️ Parking</option>
+      <option value="Other" <%= selectedCategory === 'Other' ? 'selected' : '' %> data-i18n="opt-other">ℹ️ Other Services</option>
     </select>
+    <% if (selectedCategory) { %>
+      <a href="/facilities" class="btn-outline" style="padding: 6px 14px; font-size: 0.85rem; border-radius: var(--border-radius-full);" data-i18n="fac-clear">Clear Filter</a>
+    <% } %>
   </form>
 
+  <!-- Facilities Data Table -->
   <% if (facilities.length === 0) { %>
-    <p><em>No facilities found. Add one below.</em></p>
+    <div class="empty-state">
+      <i class="fa-solid fa-folder-open"></i>
+      <h3 data-i18n="fac-empty-title">No facilities listed yet</h3>
+      <p data-i18n="fac-empty-desc">Be the first to contribute a facility location along the route using the form below.</p>
+    </div>
   <% } else { %>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Category</th>
-          <th>Location</th>
-          <th>Landmark</th>
-          <th>Contact</th>
-          <th>Description</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% facilities.forEach(function(f) { %>
+    <div class="table-container">
+      <table class="custom-table">
+        <thead>
           <tr>
-            <td><%= f.name %></td>
-            <td><%= f.category %></td>
-            <td><%= f.location %></td>
-            <td><%= f.landmark || '-' %></td>
-            <td><%= f.contact || '-' %></td>
-            <td><%= f.description || '-' %></td>
-            <td>
-              <form method="POST" action="/facilities/<%= f._id %>/delete" onsubmit="return confirm('Delete this facility?');">
-                <button type="submit">Delete</button>
-              </form>
-            </td>
+            <th data-i18n="th-name">Facility Name</th>
+            <th data-i18n="th-cat">Category</th>
+            <th data-i18n="th-loc">Location / Route</th>
+            <th data-i18n="th-lm">Landmark</th>
+            <th data-i18n="th-contact">Contact</th>
+            <th data-i18n="th-desc">Description</th>
+            <th data-i18n="th-act">Action</th>
           </tr>
-        <% }); %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% facilities.forEach(function(f) { %>
+            <tr>
+              <td><strong><%= f.name %></strong></td>
+              <td>
+                <% 
+                  let badgeClass = 'badge-other';
+                  if (f.category === 'Medical') badgeClass = 'badge-medical';
+                  else if (f.category === 'Food') badgeClass = 'badge-food';
+                  else if (f.category === 'Water') badgeClass = 'badge-water';
+                  else if (f.category === 'Toilet') badgeClass = 'badge-toilet';
+                  else if (f.category === 'Shelter') badgeClass = 'badge-shelter';
+                  else if (f.category === 'Parking') badgeClass = 'badge-parking';
+                %>
+                <span class="badge <%= badgeClass %>"><%= f.category %></span>
+              </td>
+              <td><i class="fa-solid fa-location-dot" style="color: var(--primary-saffron);"></i> <%= f.location %></td>
+              <td><%= f.landmark || '-' %></td>
+              <td>
+                <% if (f.contact) { %>
+                  <a href="tel:<%= f.contact %>" style="font-weight: 500;"><i class="fa-solid fa-phone"></i> <%= f.contact %></a>
+                <% } else { %>
+                  -
+                <% } %>
+              </td>
+              <td><%= f.description || '-' %></td>
+              <td>
+                <form method="POST" action="/facilities/<%= f._id %>/delete" onsubmit="return confirm('Are you sure you want to remove this facility?');">
+                  <button type="submit" class="btn-delete-sm" data-i18n="btn-delete"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
   <% } %>
 
-  <h3>Add a Facility</h3>
-  <form method="POST" action="/facilities" class="stack-form">
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required>
+  <!-- Add Facility Form Card -->
+  <div class="form-card" style="margin-top: 40px;">
+    <h3 class="card-title" style="margin-bottom: 20px;" data-i18n="form-fac-title"><i class="fa-solid fa-square-plus" style="color: var(--primary-saffron);"></i> Register a New Facility Location</h3>
+    
+    <form method="POST" action="/facilities">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name" class="form-label" data-i18n="lbl-fac-name">Facility / Camp Name *</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Sanjeevani Free Medical Camp" data-i18n-ph="ph-fac-name" required>
+        </div>
 
-    <label for="category">Category</label>
-    <select id="category" name="category" required>
-      <option value="Medical">Medical</option>
-      <option value="Food">Food</option>
-      <option value="Water">Water</option>
-      <option value="Toilet">Toilet</option>
-      <option value="Shelter">Shelter</option>
-      <option value="Parking">Parking</option>
-      <option value="Other">Other</option>
-    </select>
+        <div class="form-group">
+          <label for="category" class="form-label" data-i18n="lbl-fac-cat">Category *</label>
+          <select id="category" name="category" class="form-control" required>
+            <option value="Medical" data-i18n="opt-med">🏥 Medical Camp</option>
+            <option value="Food" data-i18n="opt-food">🍲 Food / Annadan</option>
+            <option value="Water" data-i18n="opt-water">💧 Drinking Water</option>
+            <option value="Toilet" data-i18n="opt-toilet">🚻 Toilet</option>
+            <option value="Shelter" data-i18n="opt-shelter">⛺ Shelter &amp; Rest</option>
+            <option value="Parking" data-i18n="opt-parking">🅿️ Parking</option>
+            <option value="Other" data-i18n="opt-other">ℹ️ Other</option>
+          </select>
+        </div>
 
-    <label for="location">Location</label>
-    <input type="text" id="location" name="location" placeholder="e.g. Near Chandrabhaga Ghat" required>
+        <div class="form-group">
+          <label for="location" class="form-label" data-i18n="lbl-fac-loc">Location / Stop *</label>
+          <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Near Wakhri Phata, Pandharpur Road" data-i18n-ph="ph-fac-loc" required>
+        </div>
 
-    <label for="landmark">Landmark (optional)</label>
-    <input type="text" id="landmark" name="landmark">
+        <div class="form-group">
+          <label for="landmark" class="form-label" data-i18n="lbl-fac-lm">Landmark (Optional)</label>
+          <input type="text" id="landmark" name="landmark" class="form-control" placeholder="e.g. Opposite ZP School" data-i18n-ph="ph-fac-lm">
+        </div>
 
-    <label for="contact">Contact (optional)</label>
-    <input type="text" id="contact" name="contact">
+        <div class="form-group">
+          <label for="contact" class="form-label" data-i18n="lbl-fac-contact">Contact Number (Optional)</label>
+          <input type="text" id="contact" name="contact" class="form-control" placeholder="e.g. 9876543210" data-i18n-ph="ph-fac-contact">
+        </div>
+      </div>
 
-    <label for="description">Description (optional)</label>
-    <textarea id="description" name="description" rows="3"></textarea>
+      <div class="form-group">
+        <label for="description" class="form-label" data-i18n="lbl-fac-desc">Description &amp; Timings (Optional)</label>
+        <textarea id="description" name="description" class="form-control" rows="3" placeholder="Provide details like available doctor specialties, 24/7 service timings, food menu, etc." data-i18n-ph="ph-fac-desc"></textarea>
+      </div>
 
-    <button type="submit">Add Facility</button>
-  </form>
+      <button type="submit" class="btn btn-primary" data-i18n="btn-add-fac">
+        <i class="fa-solid fa-plus-circle"></i> Add Facility to Route Map
+      </button>
+    </form>
+  </div>
 </section>
 
 <%- include('partials/footer') %>

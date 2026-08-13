@@ -1,0 +1,471 @@
+<%- include('partials/header') %>
+
+<!-- Leaflet CSS for Map Fallback -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="page-header">
+  <h2 class="page-title" data-i18n="trk-title">
+    <i class="fa-solid fa-map-marked-alt" style="color: var(--primary-saffron);"></i> Find My Friend &amp; Warkari Dindi Tracker
+  </h2>
+  <p class="page-description" data-i18n="trk-desc">
+    Real-time Palkhi route mapping, group troop tracking, and friend distance monitoring along the Pandharpur Wari journey.
+  </p>
+</div>
+
+<section>
+  <div class="tracker-layout">
+    <!-- Map View Area -->
+    <div class="map-container-wrapper">
+      <div class="map-controls-overlay">
+        <!-- Search Bar Overlay -->
+        <div class="map-search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="tracker-search" placeholder="Search Dindi # or Friend name..." data-i18n-ph="trk-search-ph" onkeyup="filterTrackerList(this.value)">
+        </div>
+        <!-- Map Action Controls -->
+        <div class="map-btn-group">
+          <button type="button" class="btn-map-control" id="btn-center-user" onclick="centerOnUser()" data-i18n="trk-btn-my-loc">
+            <i class="fa-solid fa-crosshairs"></i> My Location
+          </button>
+          <button type="button" class="btn-map-control active" id="btn-filter-all" onclick="filterMapCategory('all')">
+            All
+          </button>
+          <button type="button" class="btn-map-control" id="btn-filter-dindi" onclick="filterMapCategory('dindi')">
+            Dindis
+          </button>
+          <button type="button" class="btn-map-control" id="btn-filter-friends" onclick="filterMapCategory('friends')">
+            Friends
+          </button>
+        </div>
+      </div>
+      <!-- Map Target Container -->
+      <div id="map"></div>
+    </div>
+
+    <!-- Troop & Friend Sidebar Drawer -->
+    <div class="tracker-sidebar">
+      <!-- Live Location FAB Header -->
+      <div class="fab-live-bar">
+        <div class="fab-info">
+          <div class="fab-icon-box">
+            <i class="fa-solid fa-location-arrow"></i>
+          </div>
+          <div>
+            <div class="fab-title">
+              <span data-i18n="trk-live-title">Share Live Location</span>
+              <span class="pulse-badge inactive" id="location-pulse-badge"></span>
+            </div>
+            <span style="font-size: 0.76rem; color: #94A3B8;" id="location-status-text">Location Sharing Off</span>
+          </div>
+        </div>
+        <label class="switch-toggle" title="Toggle Live Location Sharing">
+          <input type="checkbox" id="live-location-toggle" onchange="toggleLiveLocation(this.checked)">
+          <span class="slider-round"></span>
+        </label>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="tracker-tabs">
+        <button type="button" class="tracker-tab-btn active" id="btn-tab-troop" onclick="switchTrackerTab('troop')" data-i18n="trk-tab-troop">
+          <i class="fa-solid fa-users"></i> My Troop / Dindi
+        </button>
+        <button type="button" class="tracker-tab-btn" id="btn-tab-friends" onclick="switchTrackerTab('friends')" data-i18n="trk-tab-friends">
+          <i class="fa-solid fa-user-group"></i> Find Friends
+        </button>
+      </div>
+
+      <!-- Tab 1 Body: My Troop / Dindi -->
+      <div class="tracker-tab-body" id="tab-troop-content">
+        <!-- Troop Header Summary Card -->
+        <div class="troop-header-card">
+          <div class="troop-name">
+            <span>Dindi #24 - Shri Sopan Kaka Palkhi</span>
+            <span class="badge badge-shelter">Active</span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted);">
+            <i class="fa-solid fa-crown" style="color: var(--primary-gold);"></i> Leader: <strong>Mauli Patil (Verified)</strong>
+          </div>
+          <div class="route-progress-bar">
+            <div class="route-progress-fill" style="width: 72%;"></div>
+          </div>
+          <div class="progress-text">
+            <span>Progress: 72% (Wakhri Stop)</span>
+            <span>18 km to Pandharpur</span>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.95rem; margin-bottom: 12px; color: var(--text-dark);">
+          <i class="fa-solid fa-people-group" style="color: var(--primary-saffron);"></i> Dindi Members (4 Active)
+        </h4>
+
+        <div class="card-list" id="troop-member-list">
+          <!-- Member 1 -->
+          <div class="member-item-card" data-name="Mauli Patil">
+            <div class="member-avatar">MP</div>
+            <div class="member-details">
+              <div class="member-name">Mauli Patil <span style="font-size: 0.75rem; color: var(--primary-saffron);">(Leader)</span></div>
+              <div class="member-subtext">
+                <span class="distance-pill">0m (You)</span>
+                <span class="battery-badge"><i class="fa-solid fa-battery-full" style="color: #22C55E;"></i> 92%</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('user')" title="Locate"><i class="fa-solid fa-location-crosshairs"></i></button>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="member-item-card" data-name="Rahul Patil">
+            <div class="member-avatar">RP</div>
+            <div class="member-details">
+              <div class="member-name">Rahul Patil</div>
+              <div class="member-subtext">
+                <span class="distance-pill">350m away</span>
+                <span class="battery-badge"><i class="fa-solid fa-battery-three-quarters" style="color: #22C55E;"></i> 85%</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="member-item-card" data-name="Priya Joshi">
+            <div class="member-avatar">PJ</div>
+            <div class="member-details">
+              <div class="member-name">Priya Joshi</div>
+              <div class="member-subtext">
+                <span class="distance-pill">1.2 km away</span>
+                <span class="battery-badge"><i class="fa-solid fa-battery-half" style="color: var(--primary-gold);"></i> 64%</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="member-item-card" data-name="Amit Shinde">
+            <div class="member-avatar">AS</div>
+            <div class="member-details">
+              <div class="member-name">Amit Shinde</div>
+              <div class="member-subtext">
+                <span class="distance-pill">2.8 km away</span>
+                <span class="battery-badge"><i class="fa-solid fa-battery-quarter" style="color: var(--emergency-red);"></i> 28%</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Locate"><i class="fa-solid fa-location-dot"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2 Body: Find Friends -->
+      <div class="tracker-tab-body" id="tab-friends-content" style="display: none;">
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="font-size: 0.95rem; color: var(--text-dark);">
+            <i class="fa-solid fa-user-check" style="color: var(--primary-saffron);"></i> Nearby Devotees &amp; Friends
+          </h4>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">4 Registered</span>
+        </div>
+
+        <div class="card-list" id="friends-card-list">
+          <!-- Friend 1 -->
+          <div class="member-item-card" data-name="Rahul Patil">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #FF6F00, #E65100);">RP</div>
+            <div class="member-details">
+              <div class="member-name">Rahul Patil</div>
+              <div class="member-subtext">
+                <span class="distance-pill">350m away</span>
+                <span>• Updated 2m ago</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f1')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+          </div>
+
+          <!-- Friend 2 -->
+          <div class="member-item-card" data-name="Priya Joshi">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #0EA5E9, #0284C7);">PJ</div>
+            <div class="member-details">
+              <div class="member-name">Priya Joshi</div>
+              <div class="member-subtext">
+                <span class="distance-pill">1.2 km away</span>
+                <span>• Updated 5m ago</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f2')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+          </div>
+
+          <!-- Friend 3 -->
+          <div class="member-item-card" data-name="Amit Shinde">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">AS</div>
+            <div class="member-details">
+              <div class="member-name">Amit Shinde</div>
+              <div class="member-subtext">
+                <span class="distance-pill">2.8 km away</span>
+                <span>• Updated 12m ago</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f3')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+          </div>
+
+          <!-- Friend 4 -->
+          <div class="member-item-card" data-name="Santosh Gaikwad">
+            <div class="member-avatar" style="background: linear-gradient(135deg, #10B981, #059669);">SG</div>
+            <div class="member-details">
+              <div class="member-name">Santosh Gaikwad</div>
+              <div class="member-subtext">
+                <span class="distance-pill">4.1 km away</span>
+                <span>• Updated 18m ago</span>
+              </div>
+            </div>
+            <button type="button" class="btn-locate" onclick="focusMarker('f4')" title="Focus on Map"><i class="fa-solid fa-eye"></i></button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-outline" style="width: 100%; margin-top: 16px; font-size: 0.9rem;" onclick="shareTrackerLink()" data-i18n="trk-invite-btn">
+          <i class="fa-solid fa-share-nodes"></i> Share / Invite Friends
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Leaflet JS Fallback Engine -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // Mock Data Structures
+  const userLoc = { lat: 17.6750, lng: 75.3200, name: "Mauli Patil (You)", role: "Troop Leader" };
+
+  const troopsData = [
+    { id: 't1', name: 'Dindi #1 - Gyaneshwar Maharaj Palkhi', lat: 17.6820, lng: 75.3260, members: 1200, leader: 'HVB Chopdar' },
+    { id: 't2', name: 'Dindi #12 - Tukaram Maharaj Palkhi', lat: 17.6710, lng: 75.3140, members: 950, leader: 'More Maharaj' },
+    { id: 't3', name: 'Dindi #24 - Shri Sopan Kaka Palkhi', lat: 17.6755, lng: 75.3210, members: 450, leader: 'Mauli Patil' }
+  ];
+
+  const friendsData = [
+    { id: 'f1', name: 'Rahul Patil', lat: 17.6770, lng: 75.3215, distance: '350m away', battery: '85%', updated: '2m ago' },
+    { id: 'f2', name: 'Priya Joshi', lat: 17.6820, lng: 75.3280, distance: '1.2 km away', battery: '64%', updated: '5m ago' },
+    { id: 'f3', name: 'Amit Shinde', lat: 17.6650, lng: 75.3100, distance: '2.8 km away', battery: '28%', updated: '12m ago' },
+    { id: 'f4', name: 'Santosh Gaikwad', lat: 17.6600, lng: 75.3020, distance: '4.1 km away', battery: '45%', updated: '18m ago' }
+  ];
+
+  let mapInstance = null;
+  let markersMap = {};
+  let currentFilter = 'all';
+
+  // Initialize Map Engine (Google Maps or Leaflet Fallback)
+  function initTrackerMap() {
+    // Check if Google Maps JS API is loaded
+    if (typeof google !== 'undefined' && google.maps) {
+      initGoogleMap();
+    } else {
+      initLeafletMap();
+    }
+  }
+
+  // Leaflet Interactive Map Fallback
+  function initLeafletMap() {
+    mapInstance = L.map('map', {
+      center: [userLoc.lat, userLoc.lng],
+      zoom: 14,
+      zoomControl: false
+    });
+
+    L.control.zoom({ position: 'bottomright' }).addTo(mapInstance);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapInstance);
+
+    // Add User Marker
+    const userIcon = L.divIcon({
+      className: 'custom-leaflet-marker',
+      html: `<div style="background:#E65100; color:#fff; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid #FFB300; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:16px;"><i class="fa-solid fa-user-large"></i></div>`,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
+    });
+    
+    const userMarker = L.marker([userLoc.lat, userLoc.lng], { icon: userIcon }).addTo(mapInstance);
+    userMarker.bindPopup(`
+      <div class="custom-infowindow">
+        <div class="infowindow-title"><i class="fa-solid fa-user" style="color:var(--primary-saffron);"></i> ${userLoc.name}</div>
+        <div class="infowindow-desc">${userLoc.role} • Live Location Active</div>
+        <button class="btn-infowindow" onclick="centerOnUser()">Center Map</button>
+      </div>
+    `);
+    markersMap['user'] = userMarker;
+
+    // Add Troop Markers
+    troopsData.forEach(t => {
+      const troopIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `<div style="background:#0F172A; color:#FFB300; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #E65100; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:14px;"><i class="fa-solid fa-flag"></i></div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+      const m = L.marker([t.lat, t.lng], { icon: troopIcon }).addTo(mapInstance);
+      m.bindPopup(`
+        <div class="custom-infowindow">
+          <div class="infowindow-title"><i class="fa-solid fa-flag" style="color:var(--primary-saffron);"></i> ${t.name}</div>
+          <div class="infowindow-desc">Leader: ${t.leader}<br>Members: ${t.members} Warkaris</div>
+          <button class="btn-infowindow" onclick="mapInstance.setView([${t.lat}, ${t.lng}], 16)">Focus Dindi</button>
+        </div>
+      `);
+      markersMap[t.id] = m;
+    });
+
+    // Add Friend Markers
+    friendsData.forEach(f => {
+      const friendIcon = L.divIcon({
+        className: 'custom-leaflet-marker',
+        html: `<div style="background:#DC2626; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:13px;"><i class="fa-solid fa-user-group"></i></div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      });
+      const m = L.marker([f.lat, f.lng], { icon: friendIcon }).addTo(mapInstance);
+      m.bindPopup(`
+        <div class="custom-infowindow">
+          <div class="infowindow-title"><i class="fa-solid fa-user-tag" style="color:var(--emergency-red);"></i> ${f.name}</div>
+          <div class="infowindow-desc">Distance: <strong>${f.distance}</strong><br>Battery: ${f.battery} • Updated ${f.updated}</div>
+          <button class="btn-infowindow" onclick="mapInstance.setView([${f.lat}, ${f.lng}], 16)">Navigate To Friend</button>
+        </div>
+      `);
+      markersMap[f.id] = m;
+    });
+  }
+
+  // Google Maps JS API Setup
+  function initGoogleMap() {
+    const center = { lat: userLoc.lat, lng: userLoc.lng };
+    const gmap = new google.maps.Map(document.getElementById('map'), {
+      zoom: 14,
+      center: center,
+      styles: [
+        { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+      ]
+    });
+    mapInstance = gmap;
+  }
+
+  // Controls & Action Logic
+  function centerOnUser() {
+    if (mapInstance) {
+      if (mapInstance.setView) {
+        mapInstance.setView([userLoc.lat, userLoc.lng], 15);
+      } else if (mapInstance.setCenter) {
+        mapInstance.setCenter({ lat: userLoc.lat, lng: userLoc.lng });
+      }
+      if (markersMap['user']) {
+        markersMap['user'].openPopup();
+      }
+    }
+  }
+
+  function focusMarker(id) {
+    const m = markersMap[id];
+    if (m && mapInstance) {
+      if (mapInstance.setView && m.getLatLng) {
+        mapInstance.setView(m.getLatLng(), 16);
+      } else if (mapInstance.setCenter && m.getPosition) {
+        mapInstance.setCenter(m.getPosition());
+      }
+      if (m.openPopup) m.openPopup();
+    }
+  }
+
+  function filterMapCategory(cat) {
+    currentFilter = cat;
+    ['btn-filter-all', 'btn-filter-dindi', 'btn-filter-friends'].forEach(id => {
+      document.getElementById(id).classList.remove('active');
+    });
+    document.getElementById(`btn-filter-${cat}`).classList.add('active');
+
+    troopsData.forEach(t => {
+      const m = markersMap[t.id];
+      if (m) {
+        if (cat === 'all' || cat === 'dindi') m.addTo(mapInstance);
+        else mapInstance.removeLayer(m);
+      }
+    });
+
+    friendsData.forEach(f => {
+      const m = markersMap[f.id];
+      if (m) {
+        if (cat === 'all' || cat === 'friends') m.addTo(mapInstance);
+        else mapInstance.removeLayer(m);
+      }
+    });
+  }
+
+  function switchTrackerTab(tab) {
+    const btnTroop = document.getElementById('btn-tab-troop');
+    const btnFriends = document.getElementById('btn-tab-friends');
+    const contentTroop = document.getElementById('tab-troop-content');
+    const contentFriends = document.getElementById('tab-friends-content');
+
+    if (tab === 'troop') {
+      btnTroop.classList.add('active');
+      btnFriends.classList.remove('active');
+      contentTroop.style.display = 'block';
+      contentFriends.style.display = 'none';
+    } else {
+      btnFriends.classList.add('active');
+      btnTroop.classList.remove('active');
+      contentFriends.style.display = 'block';
+      contentTroop.style.display = 'none';
+    }
+  }
+
+  function toggleLiveLocation(enabled) {
+    const badge = document.getElementById('location-pulse-badge');
+    const text = document.getElementById('location-status-text');
+
+    if (enabled) {
+      badge.className = 'pulse-badge active';
+      text.textContent = 'Live Location Active';
+      text.style.color = '#22C55E';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          userLoc.lat = pos.coords.latitude;
+          userLoc.lng = pos.coords.longitude;
+          if (markersMap['user']) {
+            markersMap['user'].setLatLng([userLoc.lat, userLoc.lng]);
+          }
+          centerOnUser();
+        }, err => {
+          console.warn('Geolocation warning:', err.message);
+        });
+      }
+    } else {
+      badge.className = 'pulse-badge inactive';
+      text.textContent = 'Location Sharing Off';
+      text.style.color = '#94A3B8';
+    }
+  }
+
+  function filterTrackerList(query) {
+    const q = query.toLowerCase();
+    document.querySelectorAll('.member-item-card').forEach(card => {
+      const name = card.getAttribute('data-name') || '';
+      if (name.toLowerCase().includes(q)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function shareTrackerLink() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Join My Warkari Dindi on WariMitra',
+        text: 'Track my live location and join our Dindi group on the Pandharpur Wari portal!',
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Tracker link copied to clipboard! Share it with your friends.');
+    }
+  }
+
+  // Load Map on DOM Ready
+  document.addEventListener('DOMContentLoaded', initTrackerMap);
+</script>
+
+<%- include('partials/footer') %>

@@ -1,6 +1,359 @@
   </main>
-  <footer>
-    <p>Pandharpur Wari Digital Support Portal &mdash; Built for pilgrims and remote devotees.</p>
+  
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <h4 data-i18n="footer-about-title">वारीमित्र | WariMitra</h4>
+        <p data-i18n="footer-about-desc">A dedicated digital pilgrimage portal serving lakhs of Warkari devotees on their sacred journey to Pandharpur. Providing real-time facility mapping, emergency response, and digital seva opportunities.</p>
+        <div class="spiritual-chant">॥ राम कृष्ण हरी ॥</div>
+      </div>
+      
+      <div class="footer-col">
+        <h4 data-i18n="footer-nav-title">Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="/" data-i18n="footer-link-home"><i class="fa-solid fa-chevron-right"></i> Home Portal</a></li>
+          <li><a href="/facilities" data-i18n="footer-link-fac"><i class="fa-solid fa-chevron-right"></i> Nearby Facilities &amp; Camps</a></li>
+          <li><a href="/emergency" data-i18n="footer-link-emg"><i class="fa-solid fa-chevron-right"></i> Emergency Support &amp; Helplines</a></li>
+          <li><a href="/seva" data-i18n="footer-link-seva"><i class="fa-solid fa-chevron-right"></i> Remote Digital Seva Registration</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h4 data-i18n="footer-helplines-title">Emergency Helplines</h4>
+        <ul class="footer-links">
+          <li><strong style="color: #FFFFFF;">Police Helpline:</strong> <a href="tel:100" style="color: #EF4444;">100 / 112</a></li>
+          <li><strong style="color: #FFFFFF;">Medical Ambulance:</strong> <a href="tel:108" style="color: #EF4444;">108</a></li>
+          <li><strong style="color: #FFFFFF;">Wari Control Room:</strong> <a href="tel:02186223100">02186-223100</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; <%= new Date().getFullYear() %> Pandharpur Wari Digital Support Portal. Built with devotion for pilgrims and remote Warkaris.</p>
+    </div>
   </footer>
+
+  <script>
+    const i18nTranslations = {
+      en: {
+        "brand-tagline": "Pandharpur Wari Digital Support & Seva Portal",
+        "nav-home": '<i class="fa-solid fa-house"></i> Home',
+        "nav-facilities": '<i class="fa-solid fa-map-location-dot"></i> Facilities',
+        "nav-tracker": '<i class="fa-solid fa-location-crosshairs"></i> Dindi Tracker',
+        "nav-seva": '<i class="fa-solid fa-hand-holding-heart"></i> Digital Seva',
+        "nav-sos": '<i class="fa-solid fa-triangle-exclamation"></i> SOS Emergency',
+        "trk-title": '<i class="fa-solid fa-map-marked-alt" style="color: var(--primary-saffron);"></i> Find My Friend &amp; Warkari Dindi Tracker',
+        "trk-desc": "Real-time Palkhi route mapping, group troop tracking, and friend distance monitoring along the Pandharpur Wari journey.",
+        "trk-search-ph": "Search Dindi # or Friend name...",
+        "trk-btn-my-loc": '<i class="fa-solid fa-crosshairs"></i> My Location',
+        "trk-tab-troop": '<i class="fa-solid fa-users"></i> My Troop / Dindi',
+        "trk-tab-friends": '<i class="fa-solid fa-user-group"></i> Find Friends',
+        "trk-live-title": "Share Live Location",
+        "trk-invite-btn": '<i class="fa-solid fa-share-nodes"></i> Share / Invite Friends',
+        "hero-badge": '<i class="fa-solid fa-peace"></i> ॥ जय जय राम कृष्ण हरी ॥',
+        "hero-title": "Pandharpur Wari Digital Support & Seva Portal",
+        "hero-desc": "Connecting lakhs of Warkari pilgrims and remote devotees. Access real-time route facilities, 24/7 medical and emergency support, or offer digital Seva from anywhere in the world.",
+        "cta-facilities": '<i class="fa-solid fa-location-dot"></i> Find Nearby Facilities',
+        "cta-sos": '<i class="fa-solid fa-phone-volume"></i> Emergency SOS Support',
+        "cta-seva": '<i class="fa-solid fa-hand-holding-heart"></i> Offer Digital Seva',
+        "section-sub": "Pilgrimage Care & Support",
+        "section-title": "Empowering the Wari Journey",
+        "card1-title": "Problem Statement",
+        "card1-text": "During the grand annual Pandharpur Wari, over 10-15 lakh pilgrims march across hundreds of kilometers. Pilgrims and remote devotees often face critical challenges: lack of accessible route information, medical camp navigation, emergency response delay, and limited digital participation options.",
+        "card1-highlight": "Urgent need for route-wide medical, food & shelter visibility",
+        "card2-title": "Our Digital Solution",
+        "card2-text": "<strong>WariMitra</strong> is a centralized digital support portal that bridges the gap between ground infrastructure and pilgrims. It provides live facility mapping along the Palkhi route, a direct emergency SOS dispatcher, and an online platform for global devotees to offer Seva.",
+        "card2-highlight": "24/7 centralized helpline and real-time report dispatcher",
+        "card3-title": "What You Can Do Here",
+        "card3-desc": "Whether walking in the Palkhi or supporting remotely from home, WariMitra offers tools tailored to your needs:",
+        "card3-link1": "<strong>Find Facilities:</strong> Medical, Food, Water, Toilets & Shelter",
+        "card3-link2": "<strong>Get SOS Support:</strong> Direct police/medical dispatch & report form",
+        "card3-link3": "<strong>Offer Digital Seva:</strong> Contribute Annadan, Medical supplies & Volunteering",
+        "fac-title": '<i class="fa-solid fa-map-location-dot" style="color: var(--primary-saffron);"></i> Nearby Facilities & Service Camps',
+        "fac-desc": "Find essential medical camps, food distribution (Annadan), drinking water, toilets, shelters, and parking along the Palkhi route.",
+        "fac-filter-lbl": '<i class="fa-solid fa-filter" style="color: var(--primary-saffron);"></i> Filter Category:',
+        "opt-all": "All Categories",
+        "opt-med": "🏥 Medical Camps",
+        "opt-food": "🍲 Food / Annadan",
+        "opt-water": "💧 Drinking Water",
+        "opt-toilet": "🚻 Toilets",
+        "opt-shelter": "⛺ Shelter & Rest",
+        "opt-parking": "🅿️ Parking",
+        "opt-other": "ℹ️ Other Services",
+        "fac-clear": "Clear Filter",
+        "fac-empty-title": "No facilities listed yet",
+        "fac-empty-desc": "Be the first to contribute a facility location along the route using the form below.",
+        "th-name": "Facility Name",
+        "th-cat": "Category",
+        "th-loc": "Location / Route",
+        "th-lm": "Landmark",
+        "th-contact": "Contact",
+        "th-desc": "Description",
+        "th-act": "Action",
+        "btn-delete": '<i class="fa-solid fa-trash-can"></i> Delete',
+        "form-fac-title": '<i class="fa-solid fa-square-plus" style="color: var(--primary-saffron);"></i> Register a New Facility Location',
+        "lbl-fac-name": "Facility / Camp Name *",
+        "ph-fac-name": "e.g. Sanjeevani Free Medical Camp",
+        "lbl-fac-cat": "Category *",
+        "lbl-fac-loc": "Location / Stop *",
+        "ph-fac-loc": "e.g. Near Wakhri Phata, Pandharpur Road",
+        "lbl-fac-lm": "Landmark (Optional)",
+        "ph-fac-lm": "e.g. Opposite ZP School",
+        "lbl-fac-contact": "Contact Number (Optional)",
+        "ph-fac-contact": "e.g. 9876543210",
+        "lbl-fac-desc": "Description & Timings (Optional)",
+        "ph-fac-desc": "Provide details like available doctor specialties, 24/7 service timings, food menu, etc.",
+        "btn-add-fac": '<i class="fa-solid fa-plus-circle"></i> Add Facility to Route Map',
+        "emg-title": '<i class="fa-solid fa-truck-medical"></i> 24/7 Emergency Support & SOS Dispatch',
+        "emg-desc": "Immediate helpline access and rapid emergency dispatch for Warkari pilgrims along the Pandharpur route.",
+        "emg-helpline-title": '<i class="fa-solid fa-phone-volume" style="color: var(--emergency-red);"></i> Toll-Free Emergency Helplines',
+        "emg-form-title": '<i class="fa-solid fa-triangle-exclamation"></i> Report an Emergency / Request SOS Assistance',
+        "emg-form-subtitle": "Fill this form immediately if you or a fellow pilgrim needs medical attention, security help, or assistance finding a lost family member.",
+        "lbl-emg-name": "Your Full Name *",
+        "ph-emg-name": "e.g. Ramesh Patil",
+        "lbl-emg-phone": "Phone Number *",
+        "ph-emg-phone": "e.g. 9876543210",
+        "lbl-emg-cat": "Emergency Category *",
+        "opt-emg-med": "🚨 Medical Emergency",
+        "opt-emg-lost": "🔍 Lost Person / Family Member",
+        "opt-emg-sec": "🛡️ Police / Security Help",
+        "opt-emg-fire": "🔥 Fire Incident",
+        "opt-emg-other": "⚠️ Other Urgent Issue",
+        "lbl-emg-loc": "Current Exact Location *",
+        "ph-emg-loc": "e.g. Near Wakhri Ringan Ground, Pillar No. 12",
+        "lbl-emg-desc": "Emergency Description & Details",
+        "ph-emg-desc": "Describe the situation (e.g., patient condition, age of lost person, clothes worn, landmarks nearby)",
+        "btn-sub-emg": '<i class="fa-solid fa-paper-plane"></i> Submit Emergency SOS Alert',
+        "emg-log-title": '<i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-saffron);"></i> Live Response Log',
+        "emg-empty-title": "No Active Emergency Reports",
+        "emg-empty-desc": "The route response teams are on alert. Stay safe!",
+        "th-rep-name": "Reporter Name",
+        "th-rep-phone": "Contact Phone",
+        "th-rep-type": "Emergency Type",
+        "th-rep-loc": "Location",
+        "th-rep-status": "Status",
+        "seva-title": '<i class="fa-solid fa-hand-holding-heart" style="color: var(--primary-saffron);"></i> Digital Seva & Remote Devotee Participation',
+        "seva-desc": "Can't join the physical Wari procession? Remote devotees from anywhere in the world can participate by offering Seva — Annadan food sponsorship, medical supplies, monetary donations, or volunteer coordination.",
+        "seva-ways-title": '<i class="fa-solid fa-dharmachakra" style="color: var(--primary-saffron);"></i> Ways You Can Offer Seva',
+        "card-annadan-title": "Annadan Seva",
+        "card-annadan-desc": "Sponsor meals, tea, milk, or drinking water packets for lakhs of walking Warkari pilgrims along the route stops.",
+        "card-medseva-title": "Medical Seva",
+        "card-medseva-desc": "Contribute essential first-aid kits, foot care ointments, pain relief sprays, or volunteer doctor services.",
+        "card-vol-title": "Volunteer Support",
+        "card-vol-desc": "Join as on-ground or remote digital volunteers to coordinate crowds, manage information desks, or update route info.",
+        "seva-form-title": '<i class="fa-solid fa-pen-to-square" style="color: var(--primary-saffron);"></i> Register Your Digital Seva Offer',
+        "seva-form-desc": "Submit your details and our team will get in touch to connect your contribution with verified Wari camps.",
+        "lbl-seva-name": "Full Name *",
+        "ph-seva-name": "e.g. Sunita Deshmukh",
+        "lbl-seva-email": "Email Address *",
+        "ph-seva-email": "e.g. sunita@example.com",
+        "lbl-seva-phone": "Phone / WhatsApp Number *",
+        "ph-seva-phone": "e.g. 9876543210",
+        "lbl-seva-type": "Type of Seva Offered *",
+        "opt-seva-annadan": "🍲 Annadan (Food & Water Seva)",
+        "opt-seva-med": "🏥 Medical Seva & Supplies",
+        "opt-seva-don": "💰 Monetary Donation",
+        "opt-seva-vol": "🤝 Volunteer Support / Coordination",
+        "opt-seva-oth": "✨ Other Devotional Support",
+        "lbl-seva-msg": "Message / Contribution Details (Optional)",
+        "ph-seva-msg": "Specify quantity, preferred location, or special wishes...",
+        "btn-sub-seva": '<i class="fa-solid fa-heart-circle-check"></i> Register Seva Offer',
+        "seva-recent-title": '<i class="fa-solid fa-hands-holding-circle" style="color: var(--primary-saffron);"></i> Recent Seva Contributions',
+        "seva-empty-title": "Be the First Devotee to Register Seva",
+        "seva-empty-desc": "Your contribution will bless and support thousands of Warkaris on their journey.",
+        "th-dev-name": "Devotee Name",
+        "th-dev-type": "Type of Seva",
+        "th-dev-msg": "Message / Notes",
+        "footer-about-title": "वारीमित्र | WariMitra",
+        "footer-about-desc": "A dedicated digital pilgrimage portal serving lakhs of Warkari devotees on their sacred journey to Pandharpur. Providing real-time facility mapping, emergency response, and digital seva opportunities.",
+        "footer-nav-title": "Quick Navigation",
+        "footer-link-home": '<i class="fa-solid fa-chevron-right"></i> Home Portal',
+        "footer-link-fac": '<i class="fa-solid fa-chevron-right"></i> Nearby Facilities & Camps',
+        "footer-link-emg": '<i class="fa-solid fa-chevron-right"></i> Emergency Support & Helplines',
+        "footer-link-seva": '<i class="fa-solid fa-chevron-right"></i> Remote Digital Seva Registration',
+        "footer-helplines-title": "Emergency Helplines"
+      },
+      mr: {
+        "brand-tagline": "पंढरपूर वारी डिजिटल सपोर्ट व सेवा पोर्टल",
+        "nav-home": '<i class="fa-solid fa-house"></i> मुख्यपृष्ठ',
+        "nav-facilities": '<i class="fa-solid fa-map-location-dot"></i> सुविधा केंद्र',
+        "nav-tracker": '<i class="fa-solid fa-location-crosshairs"></i> वारी ट्रेकर',
+        "nav-seva": '<i class="fa-solid fa-hand-holding-heart"></i> डिजिटल सेवा',
+        "nav-sos": '<i class="fa-solid fa-triangle-exclamation"></i> आपत्कालीन SOS',
+        "trk-title": '<i class="fa-solid fa-map-marked-alt" style="color: var(--primary-saffron);"></i> वारी मित्र व दिंडी ट्रेकर (Live Location)',
+        "trk-desc": "पालखी मार्ग नकाशा, दिंडी तुकडी स्थान, आणि मित्र-नातेवाईकांचे थेट अंतर व लोकेशन शोधा.",
+        "trk-search-ph": "दिंडी क्रमांक किंवा मित्राचे नाव शोधा...",
+        "trk-btn-my-loc": '<i class="fa-solid fa-crosshairs"></i> माझे स्थान',
+        "trk-tab-troop": '<i class="fa-solid fa-users"></i> माझी दिंडी / तुकडी',
+        "trk-tab-friends": '<i class="fa-solid fa-user-group"></i> मित्र शोधा',
+        "trk-live-title": "थेट लोकेशन शेअर करा",
+        "trk-invite-btn": '<i class="fa-solid fa-share-nodes"></i> लोकेशन शेअर / मित्र आमंत्रित करा',
+        "hero-badge": '<i class="fa-solid fa-peace"></i> ॥ जय जय राम कृष्ण हरी ॥',
+        "hero-title": "पंढरपूर वारी डिजिटल माहिती व सेवा पोर्टल",
+        "hero-desc": "लाखो वारकरी भाविकांसाठी आणि जगभरातील भक्तांसाठी. पालखी मार्गावरील live सुविधा, २४/७ वैद्यकीय व आपत्कालीन मदत, आणि ऑनलाइन डिजिटल सेवा अर्पण करा.",
+        "cta-facilities": '<i class="fa-solid fa-location-dot"></i> जवळपासच्या सुविधा शोधा',
+        "cta-sos": '<i class="fa-solid fa-phone-volume"></i> २4/७ आपत्कालीन मदत (SOS)',
+        "cta-seva": '<i class="fa-solid fa-hand-holding-heart"></i> डिजिटल सेवा अर्पण करा',
+        "section-sub": "वारकरी सेवा व सहाय्य",
+        "section-title": "वारी प्रवासाला डिजिटल पाठबळ",
+        "card1-title": "समस्येची पार्श्वभूमी",
+        "card1-text": "वार्षिक पंढरपूर वारीमध्ये १० ते १५ लाख वारकरी शेकडो किलोमीटर पायी प्रवास करतात. भाविकांना मार्गावरील वैद्यकीय केंद्र, अन्नदान, निवारा आणि आपत्कालीन मदतीची माहिती मिळण्यात अडचणी येतात.",
+        "card1-highlight": "मार्गावरील आरोग्य, भोजन व निवारा केंद्रांची त्वरित माहिती मिळणे आवश्यक",
+        "card2-title": "आमचा डिजिटल उपाय",
+        "card2-text": "<strong>वारीमित्र</strong> हे एक केंद्रीकृत डिजिटल पोर्टल आहे जे वारकरी आणि सेवाभावी संस्थांना जोडते. पालखी मार्गावरील सुविधांचे नकाशे, थेट आपत्कालीन मदतीचा मेसेज आणि ऑनलाइन सेवेची सोय येथे उपलब्ध आहे.",
+        "card2-highlight": "२४/७ केंद्रीकृत हेल्पलाइन व रिअल-टाईम मदत प्रतिसाद",
+        "card3-title": "आपण येथे काय करू शकता?",
+        "card3-desc": "तुम्ही वारीत प्रत्यक्ष असाल किंवा घरी असाल, वारीमित्र तुमच्यासाठी खालील सुविधा पुरवते:",
+        "card3-link1": "<strong>सुविधा शोधा:</strong> वैद्यकीय कॅम्प, अन्नदान, पाणी, शौचालये व निवारा",
+        "card3-link2": "<strong>आपत्कालीन मदत:</strong> थेट पोलीस व रुग्णवाहिका मदत अलर्ट पाठवा",
+        "card3-link3": "<strong>डिजिटल सेवा:</strong> अन्नदान, औषधे, किंवा स्वयंसेवक म्हणून नोंदणी करा",
+        "fac-title": '<i class="fa-solid fa-map-location-dot" style="color: var(--primary-saffron);"></i> जवळपासच्या सुविधा आणि अन्नदान/वैद्यकीय कॅम्प',
+        "fac-desc": "पालखी मार्गावरील वैद्यकीय मदत केंद्र, अन्नदान, पिण्याचे पाणी, शौचालये, निवारा व पार्किंग शोधा.",
+        "fac-filter-lbl": '<i class="fa-solid fa-filter" style="color: var(--primary-saffron);"></i> श्रेणीनुसार शोधा:',
+        "opt-all": "सर्व श्रेणी",
+        "opt-med": "🏥 वैद्यकीय कॅम्प (Medical)",
+        "opt-food": "🍲 अन्नदान / भोजन (Food)",
+        "opt-water": "💧 पिण्याचे पाणी (Water)",
+        "opt-toilet": "🚻 शौचालये (Toilet)",
+        "opt-shelter": "⛺ निवारा व विश्राम (Shelter)",
+        "opt-parking": "🅿️ पार्किंग (Parking)",
+        "opt-other": "ℹ️ इतर सुविधा (Other)",
+        "fac-clear": "फिल्टर हटवा",
+        "fac-empty-title": "अद्याप कोणतीही सुविधा नोंदवलेली नाही",
+        "fac-empty-desc": "खालील फॉर्म वापरून मार्गावरील पहिल्या सुविधेची नोंदणी करा.",
+        "th-name": "सुविधेचे नाव",
+        "th-cat": "श्रेणी",
+        "th-loc": "ठिकाण / मार्ग",
+        "th-lm": "जवळची खूण (Landmark)",
+        "th-contact": "संपर्क",
+        "th-desc": "सविस्तर माहिती",
+        "th-act": "कारवाई",
+        "btn-delete": '<i class="fa-solid fa-trash-can"></i> हटवा',
+        "form-fac-title": '<i class="fa-solid fa-square-plus" style="color: var(--primary-saffron);"></i> नवीन सुविधेची नोंदणी करा',
+        "lbl-fac-name": "सुविधेचे / कॅम्पचे नाव *",
+        "ph-fac-name": "उदा. संजीवनी मोफत वैद्यकीय कॅम्प",
+        "lbl-fac-cat": "श्रेणी *",
+        "lbl-fac-loc": "ठिकाण / पालखी तळ *",
+        "ph-fac-loc": "उदा. वाखरी फाटा जवळ, पंढरपूर रोड",
+        "lbl-fac-lm": "जवळची खूण (Optional)",
+        "ph-fac-lm": "उदा. जिल्हा परिषद शाळेसमोर",
+        "lbl-fac-contact": "संपर्क क्रमांक (Optional)",
+        "ph-fac-contact": "उदा. ९८७६५४३२१०",
+        "lbl-fac-desc": "सविस्तर माहिती व वेळ (Optional)",
+        "ph-fac-desc": "उपलब्ध डॉक्टरांची माहिती, २४ तास सेवा, जेवणाचा मेनू इत्यादी...",
+        "btn-add-fac": '<i class="fa-solid fa-plus-circle"></i> मार्ग नकाशावर सुविधा जोडा',
+        "emg-title": '<i class="fa-solid fa-truck-medical"></i> २४/७ आपत्कालीन मदत व SOS प्रतिसाद',
+        "emg-desc": "पालखी मार्गावरील वारकरी बांधवांसाठी त्वरित हेल्पलाइन संपर्क व आपत्कालीन मदत सेवा.",
+        "emg-helpline-title": '<i class="fa-solid fa-phone-volume" style="color: var(--emergency-red);"></i> मोफत आपत्कालीन हेल्पलाइन नंबर',
+        "emg-form-title": '<i class="fa-solid fa-triangle-exclamation"></i> आपत्कालीन मदतीसाठी SOS अलर्ट पाठवा',
+        "emg-form-subtitle": "तुम्हाला किंवा कोणत्याही वारकऱ्याला तातडीची वैद्यकीय, पोलीस किंवा हरवलेल्या व्यक्तीसाठी मदत हवी असल्यास हा फॉर्म त्वरित भरा.",
+        "lbl-emg-name": "तुमचे पूर्ण नाव *",
+        "ph-emg-name": "उदा. रमेश पाटील",
+        "lbl-emg-phone": "फोन नंबर *",
+        "ph-emg-phone": "उदा. ९८७६५४३२१०",
+        "lbl-emg-cat": "आपत्कालीन प्रकार *",
+        "opt-emg-med": "🚨 वैद्यकीय मदत (Medical Emergency)",
+        "opt-emg-lost": "🔍 हरवलेली व्यक्ती / कुटुंब (Lost Person)",
+        "opt-emg-sec": "🛡️ पोलीस व सुरक्षा (Police Help)",
+        "opt-emg-fire": "🔥 आगीची दुर्घटना (Fire Incident)",
+        "opt-emg-other": "⚠️ इतर गंभीर समस्या (Other)",
+        "lbl-emg-loc": "सध्याचे नक्की ठिकाण *",
+        "ph-emg-loc": "उदा. वाखरी रिंगण मैदान जवळ, खांब क्र. १२",
+        "lbl-emg-desc": "आपत्कालीन माहिती व तपशील",
+        "ph-emg-desc": "घटनेची माहिती द्या (उदा. रुग्णाची स्थिती, हरवलेल्या व्यक्तीचे वय, घातलेले कपडे इत्यादी)",
+        "btn-sub-emg": '<i class="fa-solid fa-paper-plane"></i> आपत्कालीन SOS अलर्ट पाठवा',
+        "emg-log-title": '<i class="fa-solid fa-clock-rotate-left" style="color: var(--primary-saffron);"></i> लाईव प्रतिसाद नोंद (Response Log)',
+        "emg-empty-title": "सध्या कोणतीही प्रलंबित आपत्कालीन नोंद नाही",
+        "emg-empty-desc": "मदत पथके सतर्क आहेत. सुरक्षित राहा!",
+        "th-rep-name": "नावाची नोंद",
+        "th-rep-phone": "संपर्क नंबर",
+        "th-rep-type": "आपत्कालीन प्रकार",
+        "th-rep-loc": "ठिकाण",
+        "th-rep-status": "स्थिती (Status)",
+        "seva-title": '<i class="fa-solid fa-hand-holding-heart" style="color: var(--primary-saffron);"></i> डिजिटल सेवा आणि दूरस्थ भक्त सहभाग',
+        "seva-desc": "प्रत्यक्ष वारीत सहभागी होऊ शकत नाही? जगभरातील भाविक अन्नदान, औषधे, निधी किंवा स्वयंसेवक म्हणून ऑनलाइन सेवा नोंदवू शकतात.",
+        "seva-ways-title": '<i class="fa-solid fa-dharmachakra" style="color: var(--primary-saffron);"></i> तुम्ही कशी सेवा देऊ शकता?',
+        "card-annadan-title": "अन्नदान सेवा",
+        "card-annadan-desc": "पालखी मार्गावर चालणाऱ्या लाखो वारकऱ्यांसाठी महाप्रसाद, चहा, दूध किंवा पिण्याच्या पाण्याची सोय प्रायोजित करा.",
+        "card-medseva-title": "वैद्यकीय सेवा",
+        "card-medseva-desc": "प्रथमोपचार किट, पायांच्या मलम, वेदनाशामक स्प्रे किंवा डॉक्टर म्हणून स्वयंसेवा द्या.",
+        "card-vol-title": "स्वयंसेवक पाठिंबा",
+        "card-vol-desc": "गर्दी नियंत्रण, माहिती केंद्र किंवा डिजिटल अपडेट देण्यासाठी ऑन-ग्राउंड किंवा ऑनलाइन स्वयंसेवक बना.",
+        "seva-form-title": '<i class="fa-solid fa-pen-to-square" style="color: var(--primary-saffron);"></i> तुमच्या डिजिटल सेवेची नोंदणी करा',
+        "seva-form-desc": "तुमची माहिती सबमिट करा आणि आमचे पथक तुमच्या सेवेचा वारीतील अधिकृत कॅम्पशी संपर्क घडवून देईल.",
+        "lbl-seva-name": "पूर्ण नाव *",
+        "ph-seva-name": "उदा. सुनिता देशमुख",
+        "lbl-seva-email": "ईमेल पत्ता *",
+        "ph-seva-email": "उदा. sunita@example.com",
+        "lbl-seva-phone": "फोन / व्हॉट्सॲप नंबर *",
+        "ph-seva-phone": "उदा. ९८७६५४३२१०",
+        "lbl-seva-type": "सेवेचा प्रकार *",
+        "opt-seva-annadan": "🍲 अन्नदान व पाणी सेवा (Food & Water)",
+        "opt-seva-med": "🏥 वैद्यकीय सेवा व औषधे (Medical Seva)",
+        "opt-seva-don": "💰 आर्थिक मदत (Monetary Donation)",
+        "opt-seva-vol": "🤝 स्वयंसेवक मदत (Volunteer Support)",
+        "opt-seva-oth": "✨ इतर भक्तिभाव सेवा (Other)",
+        "lbl-seva-msg": "संदेश / सेवेचा तपशील (Optional)",
+        "ph-seva-msg": "प्रमाणाची माहिती, इच्छित ठिकाण किंवा विशेष सदिच्छा...",
+        "btn-sub-seva": '<i class="fa-solid fa-heart-circle-check"></i> सेवा ऑफर नोंदवा',
+        "seva-recent-title": '<i class="fa-solid fa-hands-holding-circle" style="color: var(--primary-saffron);"></i> नुकत्याच नोंदवलेल्या सेवा',
+        "seva-empty-title": "सेवा नोंदवणारे पहिले भक्त बना",
+        "seva-empty-desc": "तुमचे योगदान हजारो वारकऱ्यांच्या प्रवासाला सुखकर करेल.",
+        "th-dev-name": "भक्ताचे नाव",
+        "th-dev-type": "सेवेचा प्रकार",
+        "th-dev-msg": "संदेश / टिपण",
+        "footer-about-title": "वारीमित्र | WariMitra",
+        "footer-about-desc": "पंढरपूर वारीतील लाखो वारकरी भाविकांच्या सेवेसाठी समर्पित डिजिटल पोर्टल. मार्ग सुविधांचे नकाशे, आपत्कालीन प्रतिसाद आणि डिजिटल सेवा सोय.",
+        "footer-nav-title": "महत्त्वाच्या लिंक्स",
+        "footer-link-home": '<i class="fa-solid fa-chevron-right"></i> मुख्यपृष्ठ',
+        "footer-link-fac": '<i class="fa-solid fa-chevron-right"></i> जवळपासच्या सुविधा व कॅम्प',
+        "footer-link-emg": '<i class="fa-solid fa-chevron-right"></i> आपत्कालीन मदत व हेल्पलाइन',
+        "footer-link-seva": '<i class="fa-solid fa-chevron-right"></i> डिजिटल सेवा नोंदणी',
+        "footer-helplines-title": "आपत्कालीन हेल्पलाइन"
+      }
+    };
+
+    function setLanguage(lang) {
+      localStorage.setItem('warimitra_lang', lang);
+      
+      const btnEn = document.getElementById('btn-lang-en');
+      const btnMr = document.getElementById('btn-lang-mr');
+      if (btnEn && btnMr) {
+        if (lang === 'mr') {
+          btnEn.classList.remove('active');
+          btnMr.classList.add('active');
+          document.body.classList.add('lang-mr');
+        } else {
+          btnMr.classList.remove('active');
+          btnEn.classList.add('active');
+          document.body.classList.remove('lang-mr');
+        }
+      }
+
+      const dict = i18nTranslations[lang] || i18nTranslations.en;
+
+      // Update text elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      // Update placeholder attributes
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (dict[key]) {
+          el.setAttribute('placeholder', dict[key]);
+        }
+      });
+    }
+
+    // On page load, auto-restore selected language from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('warimitra_lang') || 'en';
+      setLanguage(savedLang);
+    });
+  </script>
 </body>
 </html>

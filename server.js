@@ -8,6 +8,7 @@ const indexRouter = require('./routes/index');
 const facilitiesRouter = require('./routes/facilities');
 const emergencyRouter = require('./routes/emergency');
 const sevaRouter = require('./routes/seva');
+const trackerRouter = require('./routes/tracker');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,13 +29,14 @@ app.use('/', indexRouter);
 app.use('/facilities', facilitiesRouter);
 app.use('/emergency', emergencyRouter);
 app.use('/seva', sevaRouter);
+app.use('/tracker', trackerRouter);
 
 // 404 handler
 app.use((req, res) => {
   res.status(404).render('404', { title: 'Page Not Found' });
 });
 
-mongoose.connect(MONGO_URI)
+mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 3000 })
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

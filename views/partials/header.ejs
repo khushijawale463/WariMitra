@@ -3,18 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> | Pandharpur Wari</title>
+  <title><%= title %> | वारीमित्र - Pandharpur Wari Support</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Rozha+One&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <header>
-    <h1><a href="/">Pandharpur Wari</a></h1>
-    <p class="tagline">Information &amp; Digital Seva Portal</p>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/facilities">Nearby Facilities</a>
-      <a href="/emergency">Emergency Support</a>
-      <a href="/seva">Digital Seva</a>
-    </nav>
+  <header class="main-header">
+    <div class="header-container">
+      <a href="/" class="brand-wrapper">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-om"></i>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">वारी<span>मित्र</span> | WariMitra</span>
+          <span class="brand-tagline" data-i18n="brand-tagline">Pandharpur Wari Digital Support &amp; Seva Portal</span>
+        </div>
+      </a>
+      
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="/" class="nav-link <%= title === 'Home' ? 'active' : '' %>" data-i18n="nav-home"><i class="fa-solid fa-house"></i> Home</a></li>
+          <li><a href="/facilities" class="nav-link <%= title === 'Nearby Facilities' ? 'active' : '' %>" data-i18n="nav-facilities"><i class="fa-solid fa-map-location-dot"></i> Facilities</a></li>
+          <li><a href="/tracker" class="nav-link <%= title === 'Dindi & Friend Tracker' ? 'active' : '' %>" data-i18n="nav-tracker"><i class="fa-solid fa-location-crosshairs"></i> Dindi Tracker</a></li>
+          <li><a href="/seva" class="nav-link <%= title === 'Digital Seva' ? 'active' : '' %>" data-i18n="nav-seva"><i class="fa-solid fa-hand-holding-heart"></i> Digital Seva</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <div class="lang-switcher">
+          <button type="button" class="lang-btn active" id="btn-lang-en" onclick="setLanguage('en')">EN</button>
+          <button type="button" class="lang-btn" id="btn-lang-mr" onclick="setLanguage('mr')">मराठी</button>
+        </div>
+        <a href="/emergency" class="btn-emergency-pill" data-i18n="nav-sos">
+          <i class="fa-solid fa-triangle-exclamation"></i> SOS Emergency
+        </a>
+      </div>
+    </div>
   </header>
-  <main>
+  <main class="main-content">
